@@ -69,7 +69,7 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.plan.outputs.matrix) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
@@ -153,7 +153,7 @@ jobs:
       # the packaging above are what a dry run is for.
       - name: Checksum of the archive
         run: sha256sum dist/*.tar.gz
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: github.event_name != 'release'
         continue-on-error: true
         with:
