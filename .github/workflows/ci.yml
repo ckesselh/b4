@@ -1,0 +1,88 @@
+# CI: build + test + lint + formatting + man-page drift, plus the Nix package.
+# No untrusted event inputs are interpolated into any run: step.
+#
+# b4 bundles DuckDB, which takes about 25 minutes to compile from scratch on a
+# hosted runner. So: the build cache is kept between runs, a newer push cancels
+# the run of an older one, and the two expensive extras (macOS, the Nix
+# package) run on pull requests, on a manual trigger and when the files that
+# affect them change, instead of on every push.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      packaging: ${{ steps.diff.outputs.packaging }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: diff
+        run: |
+          if git diff --name-only HEAD~1 HEAD 2>/dev/null |
+            grep -qE '^(Cargo\.(toml|lock)|package\.nix|flake\.(nix|lock)|\.github/workflows/ci\.yml)$'; then
+            echo "packaging=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "packaging=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --all-targets --locked
+      - run: cargo test --locked
+      - run: cargo clippy --all-targets --locked -- -D warnings
+      - run: cargo fmt --check
+      - name: Man pages are current
+        run: |
+          tmp="$(mktemp -d)"
+          cargo run --quiet --locked --bin b4-gen-assets -- "$tmp"
+          for page in "$tmp"/*.1; do
+            diff "$page" "man/$(basename "$page")"
+          done
+          test "$(ls "$tmp"/*.1 | wc -l)" = "$(ls man/*.1 | wc -l)"
+      - name: Version fields agree
+        run: |
+          cargo="$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -1)"
+          nix="$(sed -n 's/^\s*version = "\(.*\)";$/\1/p' package.nix)"
+          echo "Cargo.toml=$cargo package.nix=$nix"
+          test -n "$cargo" && test "$cargo" = "$nix"
+
+  macos:
+    needs: changes
+    if: github.event_name != 'push' || needs.changes.outputs.packaging == 'true'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --all-targets --locked
+      - run: cargo test --locked
+
+  nix:
+    needs: changes
+    if: github.event_name != 'push' || needs.changes.outputs.packaging == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - run: nix build .#b4 --print-build-logs
+      - run: nix flake check --print-build-logs

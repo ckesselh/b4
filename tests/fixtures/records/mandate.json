@@ -1,0 +1,309 @@
+{
+  "record": "mandate",
+  "specification": "docs/format/05-master-data-and-portfolio.md, section 3.4",
+  "collection_file": "mandate.bin",
+  "collection_size": 854,
+  "collection_sha256": "fbf83617d468f86e3263cdcc5765b472549463aa66d6fc6da981ac78e7e0ad5d",
+  "reader_context": {"language": "de-DE", "application_default_currency": "EUR", "application_default_country": "DE"},
+  "fields": ["oid", "update_stamp", "creditor_id", "mandate_id", "category", "creditor_name", "mandate_flags", "mandate_date"],
+  "fields_in_memory_only": [],
+  "records": [
+    {
+      "index": 0,
+      "about": "every field set",
+      "offset": 0,
+      "record_size": 111,
+      "record_hex": "6f00000041e3722d2154e52d15006d616e646174655f6372656469746f725f6964233114006d616e646174655f6d616e646174655f696423310f00496e737572616e63653a436172233117006d616e646174655f6372656469746f725f6e616d6523310101000000e1363cb53edc08",
+      "written": {
+        "oid": 762504001,
+        "update_stamp": 770004001,
+        "creditor_id": "mandate_creditor_id#1",
+        "mandate_id": "mandate_mandate_id#1",
+        "category": "Insurance:Car#1",
+        "creditor_name": "mandate_creditor_name#1",
+        "mandate_flags": 257,
+        "mandate_date": "2024-03-07T14:45:30.0000000"
+      },
+      "read": {
+        "oid": 762504001,
+        "update_stamp": 770004001,
+        "creditor_id": "mandate_creditor_id#1",
+        "mandate_id": "mandate_mandate_id#1",
+        "category": "Insurance:Car#1",
+        "creditor_name": "mandate_creditor_name#1",
+        "mandate_flags": 257,
+        "mandate_date": "2024-03-07T14:45:30.0000000"
+      }
+    },
+    {
+      "index": 1,
+      "about": "no field set",
+      "offset": 115,
+      "record_size": 32,
+      "record_hex": "2000000042e3722d2254e52d0000000000000000000000000000000000000000",
+      "written": {
+        "oid": 762504002,
+        "update_stamp": 770004002,
+        "creditor_id": null,
+        "mandate_id": null,
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": null
+      },
+      "read": {
+        "oid": 762504002,
+        "update_stamp": 770004002,
+        "creditor_id": null,
+        "mandate_id": null,
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": null
+      }
+    },
+    {
+      "index": 2,
+      "about": "flag 1",
+      "offset": 151,
+      "record_size": 73,
+      "record_hex": "4900000043e3722d2354e52d15006d616e646174655f6372656469746f725f6964233314006d616e646174655f6d616e646174655f6964233300000000010000000000000000000000",
+      "written": {
+        "oid": 762504003,
+        "update_stamp": 770004003,
+        "creditor_id": "mandate_creditor_id#3",
+        "mandate_id": "mandate_mandate_id#3",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 1,
+        "mandate_date": null
+      },
+      "read": {
+        "oid": 762504003,
+        "update_stamp": 770004003,
+        "creditor_id": "mandate_creditor_id#3",
+        "mandate_id": "mandate_mandate_id#3",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 1,
+        "mandate_date": null
+      }
+    },
+    {
+      "index": 3,
+      "about": "flag 0x100",
+      "offset": 228,
+      "record_size": 73,
+      "record_hex": "4900000044e3722d2454e52d15006d616e646174655f6372656469746f725f6964233414006d616e646174655f6d616e646174655f6964233400000000000100000000000000000000",
+      "written": {
+        "oid": 762504004,
+        "update_stamp": 770004004,
+        "creditor_id": "mandate_creditor_id#4",
+        "mandate_id": "mandate_mandate_id#4",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 256,
+        "mandate_date": null
+      },
+      "read": {
+        "oid": 762504004,
+        "update_stamp": 770004004,
+        "creditor_id": "mandate_creditor_id#4",
+        "mandate_id": "mandate_mandate_id#4",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 256,
+        "mandate_date": null
+      }
+    },
+    {
+      "index": 4,
+      "about": "flags without a meaning, negative",
+      "offset": 305,
+      "record_size": 73,
+      "record_hex": "4900000045e3722d2554e52d15006d616e646174655f6372656469746f725f6964233514006d616e646174655f6d616e646174655f6964233500000000020000800000000000000000",
+      "written": {
+        "oid": 762504005,
+        "update_stamp": 770004005,
+        "creditor_id": "mandate_creditor_id#5",
+        "mandate_id": "mandate_mandate_id#5",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": -2147483646,
+        "mandate_date": null
+      },
+      "read": {
+        "oid": 762504005,
+        "update_stamp": 770004005,
+        "creditor_id": "mandate_creditor_id#5",
+        "mandate_id": "mandate_mandate_id#5",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": -2147483646,
+        "mandate_date": null
+      }
+    },
+    {
+      "index": 5,
+      "about": "date at midnight",
+      "offset": 382,
+      "record_size": 73,
+      "record_hex": "4900000046e3722d2654e52d15006d616e646174655f6372656469746f725f6964233614006d616e646174655f6d616e646174655f6964233600000000000000000000752792dddb08",
+      "written": {
+        "oid": 762504006,
+        "update_stamp": 770004006,
+        "creditor_id": "mandate_creditor_id#6",
+        "mandate_id": "mandate_mandate_id#6",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": "2023-11-05T00:00:00.0000000"
+      },
+      "read": {
+        "oid": 762504006,
+        "update_stamp": 770004006,
+        "creditor_id": "mandate_creditor_id#6",
+        "mandate_id": "mandate_mandate_id#6",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": "2023-11-05T00:00:00.0000000"
+      }
+    },
+    {
+      "index": 6,
+      "about": "date marked as UTC",
+      "offset": 459,
+      "record_size": 73,
+      "record_hex": "4900000047e3722d2754e52d15006d616e646174655f6372656469746f725f6964233714006d616e646174655f6d616e646174655f696423370000000000000000802946515bdedb08",
+      "written": {
+        "oid": 762504007,
+        "update_stamp": 770004007,
+        "creditor_id": "mandate_creditor_id#7",
+        "mandate_id": "mandate_mandate_id#7",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": "2023-11-05T23:59:59.0000000Z"
+      },
+      "read": {
+        "oid": 762504007,
+        "update_stamp": 770004007,
+        "creditor_id": "mandate_creditor_id#7",
+        "mandate_id": "mandate_mandate_id#7",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": "2023-11-05T23:59:59.0000000"
+      }
+    },
+    {
+      "index": 7,
+      "about": "date marked as local time, with a fraction",
+      "offset": 536,
+      "record_size": 73,
+      "record_hex": "4900000048e3722d2854e52d15006d616e646174655f6372656469746f725f6964233814006d616e646174655f6d616e646174655f696423380000000000000000078e9cd29adddb08",
+      "written": {
+        "oid": 762504008,
+        "update_stamp": 770004008,
+        "creditor_id": "mandate_creditor_id#8",
+        "mandate_id": "mandate_mandate_id#8",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": "2023-11-05T01:02:03.1234567L"
+      },
+      "read": {
+        "oid": 762504008,
+        "update_stamp": 770004008,
+        "creditor_id": "mandate_creditor_id#8",
+        "mandate_id": "mandate_mandate_id#8",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": "2023-11-05T01:02:03.1234567"
+      }
+    },
+    {
+      "index": 8,
+      "about": "mandate id that the list would drop",
+      "offset": 613,
+      "record_size": 60,
+      "record_hex": "3c00000049e3722d2954e52d15006d616e646174655f6372656469746f725f6964233907004f46464c494e4500000000000000000000000000000000",
+      "written": {
+        "oid": 762504009,
+        "update_stamp": 770004009,
+        "creditor_id": "mandate_creditor_id#9",
+        "mandate_id": "OFFLINE",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": null
+      },
+      "read": {
+        "oid": 762504009,
+        "update_stamp": 770004009,
+        "creditor_id": "mandate_creditor_id#9",
+        "mandate_id": "OFFLINE",
+        "category": null,
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": null
+      }
+    },
+    {
+      "index": 9,
+      "about": "category with an empty level",
+      "offset": 677,
+      "record_size": 92,
+      "record_hex": "5c0000004ae3722d2a54e52d16006d616e646174655f6372656469746f725f696423313015006d616e646174655f6d616e646174655f69642331301100496e737572616e63653a3a4361722331300000000000000000000000000000",
+      "written": {
+        "oid": 762504010,
+        "update_stamp": 770004010,
+        "creditor_id": "mandate_creditor_id#10",
+        "mandate_id": "mandate_mandate_id#10",
+        "category": "Insurance::Car#10",
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": null
+      },
+      "read": {
+        "oid": 762504010,
+        "update_stamp": 770004010,
+        "creditor_id": "mandate_creditor_id#10",
+        "mandate_id": "mandate_mandate_id#10",
+        "category": "Insurance:UNBEKANNT:Car#10",
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": null
+      }
+    },
+    {
+      "index": 10,
+      "about": "category of blanks only",
+      "offset": 773,
+      "record_size": 77,
+      "record_hex": "4d0000004be3722d2b54e52d16006d616e646174655f6372656469746f725f696423313115006d616e646174655f6d616e646174655f6964233131020020200000000000000000000000000000",
+      "written": {
+        "oid": 762504011,
+        "update_stamp": 770004011,
+        "creditor_id": "mandate_creditor_id#11",
+        "mandate_id": "mandate_mandate_id#11",
+        "category": "  ",
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": null
+      },
+      "read": {
+        "oid": 762504011,
+        "update_stamp": 770004011,
+        "creditor_id": "mandate_creditor_id#11",
+        "mandate_id": "mandate_mandate_id#11",
+        "category": "(nicht auswerten)",
+        "creditor_name": null,
+        "mandate_flags": 0,
+        "mandate_date": null
+      }
+    }
+  ]
+}

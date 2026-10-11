@@ -1,0 +1,76 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-categories-list 1  "b4 0.1.0" 
+.SH NAME
+b4\-categories\-list \- List categories
+.SH SYNOPSIS
+\fBb4 categories list\fR [\fB\-\-db\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-no\-header\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] 
+.SH DESCRIPTION
+List categories
+.PP
+List the category catalogue as a tree, with the number and the sum of the bookings in each category.
+.PP
+The levels of a category are the parts of its name between colons: `Wohnen:Nebenkosten:Strom` is `Strom` below `Nebenkosten` below `Wohnen`. Table output indents each level by two blanks. A parent that is no category of its own, only the beginning of another name, is listed with the note `no record`. Categories of one level are ordered by name, ignoring case, character by character in Unicode order: digits and punctuation come before letters, and letters outside A to Z, such as umlauts, after Z.
+.PP
+BOOKINGS and SUM are the bookings of the category itself and their net sum (credits minus debits); WITH CHILDREN and SUM WITH CHILDREN include all categories below it. Every booking counts once: a split booking or a collective booking counts as its parts, not as parts plus the whole. Pending bookings are included. Sums are per currency: a category with bookings in several currencies has one line for each. A booking belongs to the category of the same name, ignoring case.
+.PP
+Bookings in a category that is not in the catalogue follow under `(not in catalogue)`, one entry per name (ignoring case), and bookings without a category under `(uncategorized)`. BOOKINGS over all lines is therefore the number of all bookings that count.
+.PP
+The other formats have one row per category and currency, with these columns: `full_name`, `name` (the last level), `parent` (the full name of the parent), `depth` (0 at the top), `kind` (`category`, `implied_parent` for a parent that is no category of its own, `not_in_catalogue` or `uncategorized`), `currency`, `booking_count`, `sum`, `booking_count_with_children`, `sum_with_children`, and from the `categories` table `budget_period`, `budget_amount`, `special`, `totals_bucket` and `hidden_by_banking4`. A category without bookings has one row with no currency and no sums.
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 categories list
+    Show the category tree with counts and sums.
+b4 categories list \-\-output jsonl
+    One JSON object per category and currency.
+b4 categories list \-\-output csv | grep \(aq,uncategorized,\(aq
+    The number and the sum of the bookings without a category.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1),
+\fBb4\-categories\fR(1)
+.SH VERSION
+v0.1.0

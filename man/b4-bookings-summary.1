@@ -1,0 +1,146 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-bookings-summary 1  "b4 0.1.0" 
+.SH NAME
+b4\-bookings\-summary \- Count and sum up bookings by month, year, category, payee or account
+.SH SYNOPSIS
+\fBb4 bookings summary\fR <\fB\-\-by\fR> [\fB\-\-db\fR] [\fB\-\-account\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-from\fR] [\fB\-\-no\-header\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-\-to\fR] [\fB\-\-filter\fR] [\fB\-\-payee\fR] [\fB\-\-category\fR] [\fB\-\-uncategorized\fR] [\fB\-\-min\fR] [\fB\-\-max\fR] [\fB\-\-debit\fR] [\fB\-\-credit\fR] [\fB\-\-pending\fR] [\fB\-\-booked\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] 
+.SH DESCRIPTION
+Count and sum up bookings by month, year, category, payee or account
+.PP
+Group the bookings that pass the filters and print one line per group with the number of bookings, the sum of the debits (negative), the sum of the credits and the net amount, which is the two added up.
+.PP
+Every booking counts once: of a split booking or a collective booking the parts are counted and the row for the whole is not. Amounts in different currencies are never added: a group with two currencies has two lines. Pending bookings are included; add \-\-booked to leave them out.
+.PP
+Months and years are those of the booking date, in ascending order; bookings without a booking date (pending ones) form a last group of their own. Categories, payees and accounts are ordered by name. A category stands for itself: the line of `Wohnen` does not include `Wohnen:Miete` (use \-\-category Wohnen with \-\-by year for the total of the subtree). Bookings without a category or without a payee form the last group.
+.PP
+The filters are those of `b4 bookings list`. DATE is a day (2026\-03\-14), a month (2026\-03) or a year (2026); AMOUNT is a number like 1234.56 or 1234,56.
+.PP
+With \-\-output json, jsonl or csv every line has the fields currency, booking_count, debits, credits and net after its group: month (YYYY\-MM), year (YYYY), category, payee_name, or account_id and account_name. The group without a value is null there, and "(no date)" or "(none)" in the table.
+.SH OPTIONS
+.TP
+\fB\-\-by\fR \fI<GROUP>\fR
+What to group the bookings by
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+month: Calendar month of the booking date
+.IP \(bu 2
+year: Calendar year of the booking date
+.IP \(bu 2
+category: Category
+.IP \(bu 2
+payee: Payee name
+.IP \(bu 2
+account: Account
+.RE
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.SH FILTERS
+.TP
+\fB\-\-account\fR \fI<ACCOUNT>\fR
+Only bookings of this account; repeat for several accounts
+
+ACCOUNT is tried in this order: the numeric id from `b4 accounts list`; the IBAN (blanks and case do not matter); the account number; a part of the account name (case does not matter) that only one account has, where a complete name wins over a part. If several accounts match, the command fails and lists them with their ids.
+.TP
+\fB\-\-from\fR \fI<DATE>\fR
+Only bookings on or after this date (booking date)
+.TP
+\fB\-\-to\fR \fI<DATE>\fR
+Only bookings on or before this date (booking date)
+.TP
+\fB\-\-filter\fR \fI<TEXT>\fR
+Only bookings with TEXT in any text field, ignoring case
+
+Searched are the payee name, the purpose, the booking text, the category, the notes and the payee\*(Aqs IBAN. TEXT is taken as it is: there are no wildcards. A word that the bank broke over two lines of the purpose is found as well.
+.TP
+\fB\-\-payee\fR \fI<TEXT>\fR
+Only bookings whose payee name contains TEXT, ignoring case
+.TP
+\fB\-\-category\fR \fI<TEXT>\fR
+Only bookings in a category whose name, or the name of one of its parents, contains TEXT, ignoring case
+
+TEXT is searched in the full name of the category, which holds every level: `Wohnen` selects `Wohnen`, `Wohnen:Miete` and `Wohnen:Nebenkosten:Strom`; `Wohnen:Miete` selects only that one.
+.TP
+\fB\-\-uncategorized\fR
+Only bookings without a category
+.TP
+\fB\-\-min\fR \fI<AMOUNT>\fR
+Only bookings of at least this amount, whatever the direction
+.TP
+\fB\-\-max\fR \fI<AMOUNT>\fR
+Only bookings of at most this amount, whatever the direction
+.TP
+\fB\-\-debit\fR
+Only money leaving the account
+.TP
+\fB\-\-credit\fR
+Only money arriving on the account
+.TP
+\fB\-\-pending\fR
+Only bookings the bank has announced but not booked yet
+
+Pending bookings are not part of the balance of their account.
+.TP
+\fB\-\-booked\fR
+Only bookings the bank has booked
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 bookings summary \-\-by month \-\-from 2025 \-\-to 2025
+    Income and spending per month of 2025.
+b4 bookings summary \-\-by category \-\-account giro \-\-from 2025\-01 \-\-to 2025\-06
+    Totals per category for one account in the first half of 2025.
+b4 bookings summary \-\-by year \-\-category Wohnen \-\-booked
+    What a category and its subcategories cost per year, pending bookings
+    left out.
+b4 bookings summary \-\-by payee \-\-debit \-\-output json
+    What was paid to whom, as JSON.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1),
+\fBb4\-bookings\fR(1)
+.SH VERSION
+v0.1.0

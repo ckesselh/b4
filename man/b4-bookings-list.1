@@ -1,0 +1,153 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-bookings-list 1  "b4 0.1.0" 
+.SH NAME
+b4\-bookings\-list \- List bookings
+.SH SYNOPSIS
+\fBb4 bookings list\fR [\fB\-\-account\fR] [\fB\-\-db\fR] [\fB\-\-from\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-no\-header\fR] [\fB\-\-to\fR] [\fB\-\-filter\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-\-payee\fR] [\fB\-\-category\fR] [\fB\-\-uncategorized\fR] [\fB\-\-min\fR] [\fB\-\-max\fR] [\fB\-\-debit\fR] [\fB\-\-credit\fR] [\fB\-\-pending\fR] [\fB\-\-booked\fR] [\fB\-\-sort\fR] [\fB\-\-reverse\fR] [\fB\-\-limit\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] 
+.SH DESCRIPTION
+List bookings
+.PP
+List bookings, by default all of them ordered by date with the newest last. The filters narrow the list down; a booking must pass all of them. Bookings of accounts that are hidden in Banking4 are listed like any other.
+.PP
+The table shows id, booking date, account, payee, purpose, category and the amount with its currency. Amounts are signed: negative is money leaving the account. Payee, purpose and category are cut to fit the terminal, never wrapped. A pending booking has a * after its date, or "pending" in its place as long as it has no booking date. Such a booking sorts after all dated ones.
+.PP
+DATE is a day (2026\-03\-14), a month (2026\-03) or a year (2026). As \-\-from, a month or year means its first day; as \-\-to, its last day.
+.PP
+AMOUNT is a number with an optional decimal part after a point or a comma (1234.56 or 1234,56), without a sign and without thousands separators.
+.PP
+A split booking and a collective booking are stored as one row for the whole and one row for each part, and all of these rows are listed. To add up amounts without counting money twice, use `b4 bookings summary`, or take only the rows whose field `counted` is true.
+.PP
+With \-\-output json, jsonl or csv every booking has these fields, named as in `b4 schema bookings_view`: account_id, id, account_name, account_iban, booking_date, value_date, status, pending, amount, currency, debit, payee_name, payee_iban, payee_bic, purpose, category, booking_text, notes, counted, split_role, master_id, end_to_end_id, mandate_id, creditor_id. `b4 bookings show` has the remaining fields of a booking.
+.SH OPTIONS
+.TP
+\fB\-\-sort\fR \fI<KEY>\fR [default: date]
+Order by date, amount or payee name
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+date: Booking date, oldest first
+.IP \(bu 2
+amount: Signed amount, smallest first
+.IP \(bu 2
+payee: Payee name, A to Z
+.RE
+.TP
+\fB\-\-reverse\fR
+Reverse the order: newest, largest or last in the alphabet first
+.TP
+\fB\-\-limit\fR \fI<N>\fR
+Print at most N bookings, the first N in the chosen order
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.SH FILTERS
+.TP
+\fB\-\-account\fR \fI<ACCOUNT>\fR
+Only bookings of this account; repeat for several accounts
+
+ACCOUNT is tried in this order: the numeric id from `b4 accounts list`; the IBAN (blanks and case do not matter); the account number; a part of the account name (case does not matter) that only one account has, where a complete name wins over a part. If several accounts match, the command fails and lists them with their ids.
+.TP
+\fB\-\-from\fR \fI<DATE>\fR
+Only bookings on or after this date (booking date)
+.TP
+\fB\-\-to\fR \fI<DATE>\fR
+Only bookings on or before this date (booking date)
+.TP
+\fB\-\-filter\fR \fI<TEXT>\fR
+Only bookings with TEXT in any text field, ignoring case
+
+Searched are the payee name, the purpose, the booking text, the category, the notes and the payee\*(Aqs IBAN. TEXT is taken as it is: there are no wildcards. A word that the bank broke over two lines of the purpose is found as well.
+.TP
+\fB\-\-payee\fR \fI<TEXT>\fR
+Only bookings whose payee name contains TEXT, ignoring case
+.TP
+\fB\-\-category\fR \fI<TEXT>\fR
+Only bookings in a category whose name, or the name of one of its parents, contains TEXT, ignoring case
+
+TEXT is searched in the full name of the category, which holds every level: `Wohnen` selects `Wohnen`, `Wohnen:Miete` and `Wohnen:Nebenkosten:Strom`; `Wohnen:Miete` selects only that one.
+.TP
+\fB\-\-uncategorized\fR
+Only bookings without a category
+.TP
+\fB\-\-min\fR \fI<AMOUNT>\fR
+Only bookings of at least this amount, whatever the direction
+.TP
+\fB\-\-max\fR \fI<AMOUNT>\fR
+Only bookings of at most this amount, whatever the direction
+.TP
+\fB\-\-debit\fR
+Only money leaving the account
+.TP
+\fB\-\-credit\fR
+Only money arriving on the account
+.TP
+\fB\-\-pending\fR
+Only bookings the bank has announced but not booked yet
+
+Pending bookings are not part of the balance of their account.
+.TP
+\fB\-\-booked\fR
+Only bookings the bank has booked
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 bookings list \-\-from 2025\-03 \-\-to 2025\-03
+    Everything booked in March 2025.
+b4 bookings list \-\-account giro \-\-filter supermarkt \-\-debit
+    Money spent from one account where any text field contains
+    "supermarkt".
+b4 bookings list \-\-category Wohnen \-\-min 100 \-\-sort amount
+    Bookings of 100 or more in a category and its subcategories, the
+    largest debit first.
+b4 bookings list \-\-uncategorized \-\-from 2025 \-\-output csv
+    The bookings since 2025 that have no category, as CSV.
+b4 bookings list \-\-reverse \-\-limit 20
+    The 20 most recent bookings, newest first.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1),
+\fBb4\-bookings\fR(1)
+.SH VERSION
+v0.1.0

@@ -1,0 +1,291 @@
+{
+  "record": "payer",
+  "specification": "docs/format/05-master-data-and-portfolio.md, section 3.2",
+  "collection_file": "payer.bin",
+  "collection_size": 500,
+  "collection_sha256": "d28ee578803bde4075a067590daa700b7ce206c6a2db7087b86f728349accf0b",
+  "reader_context": {"language": "de-DE", "application_default_currency": "EUR", "application_default_country": "DE"},
+  "fields": ["oid", "update_stamp", "party_oid", "party_name", "mandate_id", "mandate_signature_date", "mandate_revocation_date", "local_instrument_code", "notes", "category"],
+  "fields_in_memory_only": [],
+  "records": [
+    {
+      "index": 0,
+      "about": "every field set",
+      "offset": 0,
+      "record_size": 103,
+      "record_hex": "6700000071db722d514ce52d8a8a0100120070617965725f70617274795f6e616d652331120070617965725f6d616e646174655f69642331e5070606e50707070400434f52450d0070617965725f6e6f74657323311000496e636f6d653a4d656d626572732331",
+      "written": {
+        "oid": 762502001,
+        "update_stamp": 770002001,
+        "party_oid": 101002,
+        "party_name": "payer_party_name#1",
+        "mandate_id": "payer_mandate_id#1",
+        "mandate_signature_date": "2021-06-06",
+        "mandate_revocation_date": "2021-07-07",
+        "local_instrument_code": "CORE",
+        "notes": "payer_notes#1",
+        "category": "Income:Members#1"
+      },
+      "read": {
+        "oid": 762502001,
+        "update_stamp": 770002001,
+        "party_oid": 101002,
+        "party_name": "payer_party_name#1",
+        "mandate_id": "payer_mandate_id#1",
+        "mandate_signature_date": "2021-06-06",
+        "mandate_revocation_date": "2021-07-07",
+        "local_instrument_code": "CORE",
+        "notes": "payer_notes#1",
+        "category": "Income:Members#1"
+      }
+    },
+    {
+      "index": 1,
+      "about": "no field set",
+      "offset": 107,
+      "record_size": 34,
+      "record_hex": "2200000072db722d524ce52d00000000000000000000000000000000000000000000",
+      "written": {
+        "oid": 762502002,
+        "update_stamp": 770002002,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": null
+      },
+      "read": {
+        "oid": 762502002,
+        "update_stamp": 770002002,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": null
+      }
+    },
+    {
+      "index": 2,
+      "about": "negative party reference",
+      "offset": 145,
+      "record_size": 52,
+      "record_hex": "3400000073db722d534ce52dfeffffff120070617965725f70617274795f6e616d65233400000000000000000000000000000000",
+      "written": {
+        "oid": 762502003,
+        "update_stamp": 770002003,
+        "party_oid": -2,
+        "party_name": "payer_party_name#4",
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": null
+      },
+      "read": {
+        "oid": 762502003,
+        "update_stamp": 770002003,
+        "party_oid": -2,
+        "party_name": "payer_party_name#4",
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": null
+      }
+    },
+    {
+      "index": 3,
+      "about": "category with blanks around the levels",
+      "offset": 201,
+      "record_size": 54,
+      "record_hex": "3600000074db722d544ce52d0000000000000000000000000000000000000000140020496e636f6d65203a204d656d62657273233520",
+      "written": {
+        "oid": 762502004,
+        "update_stamp": 770002004,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": " Income : Members#5 "
+      },
+      "read": {
+        "oid": 762502004,
+        "update_stamp": 770002004,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": "Income:Members#5"
+      }
+    },
+    {
+      "index": 4,
+      "about": "category with an empty level",
+      "offset": 259,
+      "record_size": 51,
+      "record_hex": "3300000075db722d554ce52d00000000000000000000000000000000000000001100496e636f6d653a3a4d656d626572732336",
+      "written": {
+        "oid": 762502005,
+        "update_stamp": 770002005,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": "Income::Members#6"
+      },
+      "read": {
+        "oid": 762502005,
+        "update_stamp": 770002005,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": "Income:UNBEKANNT:Members#6"
+      }
+    },
+    {
+      "index": 5,
+      "about": "category of blanks only",
+      "offset": 314,
+      "record_size": 35,
+      "record_hex": "2300000076db722d564ce52d0000000000000000000000000000000000000000010020",
+      "written": {
+        "oid": 762502006,
+        "update_stamp": 770002006,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": " "
+      },
+      "read": {
+        "oid": 762502006,
+        "update_stamp": 770002006,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": "(nicht auswerten)"
+      }
+    },
+    {
+      "index": 6,
+      "about": "category named like the pseudo category 'not set'",
+      "offset": 353,
+      "record_size": 49,
+      "record_hex": "3100000077db722d574ce52d00000000000000000000000000000000000000000f00286e696368742067657365747a7429",
+      "written": {
+        "oid": 762502007,
+        "update_stamp": 770002007,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": "(nicht gesetzt)"
+      },
+      "read": {
+        "oid": 762502007,
+        "update_stamp": 770002007,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": null
+      }
+    },
+    {
+      "index": 7,
+      "about": "revoked mandate, no signature date",
+      "offset": 406,
+      "record_size": 52,
+      "record_hex": "3400000078db722d584ce52d000000000000120070617965725f6d616e646174655f6964233900000000e7070c1f000000000000",
+      "written": {
+        "oid": 762502008,
+        "update_stamp": 770002008,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": "payer_mandate_id#9",
+        "mandate_signature_date": null,
+        "mandate_revocation_date": "2023-12-31",
+        "local_instrument_code": null,
+        "notes": null,
+        "category": null
+      },
+      "read": {
+        "oid": 762502008,
+        "update_stamp": 770002008,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": "payer_mandate_id#9",
+        "mandate_signature_date": null,
+        "mandate_revocation_date": "2023-12-31",
+        "local_instrument_code": null,
+        "notes": null,
+        "category": null
+      }
+    },
+    {
+      "index": 8,
+      "about": "empty texts",
+      "offset": 462,
+      "record_size": 34,
+      "record_hex": "2200000079db722d594ce52d00000000000000000000000000000000000000000000",
+      "written": {
+        "oid": 762502009,
+        "update_stamp": 770002009,
+        "party_oid": 0,
+        "party_name": "",
+        "mandate_id": "",
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": "",
+        "category": null
+      },
+      "read": {
+        "oid": 762502009,
+        "update_stamp": 770002009,
+        "party_oid": 0,
+        "party_name": null,
+        "mandate_id": null,
+        "mandate_signature_date": null,
+        "mandate_revocation_date": null,
+        "local_instrument_code": null,
+        "notes": null,
+        "category": null
+      }
+    }
+  ]
+}

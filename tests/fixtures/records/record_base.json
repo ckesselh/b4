@@ -1,0 +1,84 @@
+{
+  "record_type": "record_base",
+  "file": "record_base.bin",
+  "records": [
+    {
+      "about": "small values",
+      "offset": 0,
+      "record_size": 12,
+      "set": {
+        "oid": 1,
+        "update_stamp": 2
+      },
+      "read": {
+        "oid": 1,
+        "update_stamp": 2
+      }
+    },
+    {
+      "about": "all zero",
+      "offset": 16,
+      "record_size": 12,
+      "set": {
+        "oid": 0,
+        "update_stamp": 0
+      },
+      "read": {
+        "oid": 0,
+        "update_stamp": 0
+      }
+    },
+    {
+      "about": "typical: 2025-05-08 and one day later",
+      "offset": 32,
+      "record_size": 12,
+      "set": {
+        "oid": 800000001,
+        "update_stamp": 800086401
+      },
+      "read": {
+        "oid": 800000001,
+        "update_stamp": 800086401
+      }
+    },
+    {
+      "about": "negative stamps (before 2000)",
+      "offset": 48,
+      "record_size": 12,
+      "set": {
+        "oid": -5,
+        "update_stamp": -7
+      },
+      "read": {
+        "oid": -5,
+        "update_stamp": -7
+      }
+    },
+    {
+      "about": "largest values",
+      "offset": 64,
+      "record_size": 12,
+      "set": {
+        "oid": 2147483647,
+        "update_stamp": 2147483646
+      },
+      "read": {
+        "oid": 2147483647,
+        "update_stamp": 2147483646
+      }
+    },
+    {
+      "about": "smallest values",
+      "offset": 80,
+      "record_size": 12,
+      "set": {
+        "oid": -2147483648,
+        "update_stamp": -2147483648
+      },
+      "read": {
+        "oid": -2147483648,
+        "update_stamp": -2147483648
+      }
+    }
+  ]
+}

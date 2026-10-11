@@ -1,0 +1,4 @@
+# Allow unwrap()/expect() in tests so the unwrap_used/expect_used lints (set in
+# Cargo.toml's [lints.clippy]) only apply to non-test code.
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true

@@ -1,0 +1,97 @@
+[package]
+name = "b4"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85.1"
+description = "Read Banking4 vault files: decrypt a .sub vault into a DuckDB database and query accounts, bookings, payees and categories"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/ckesselh/b4"
+homepage = "https://github.com/ckesselh/b4"
+categories = ["command-line-utilities", "finance"]
+keywords = ["banking4", "subsembly", "duckdb", "finance", "cli"]
+exclude = ["/.local", "/.github", "/result"]
+# Targets are declared explicitly; do not let Cargo auto-discover src/bin/*.rs
+# (that would add a stray "gen-assets" bin alongside the named one below).
+autobins = false
+
+# --- Single source of truth ---------------------------------------------------
+# The library exposes the clap `Cli` (derive Parser) plus the core `run()`. Both
+# binaries depend on the library, so the clap command is defined exactly once and
+# reused via `clap::CommandFactory` (Cli::command()):
+#   * b4            -> the real CLI
+#   * b4-gen-assets -> writes the man pages + shell completions at build time,
+#                      then deleted from $out in package.nix.
+[lib]
+name = "b4"
+path = "src/lib.rs"
+
+[[bin]]
+name = "b4"
+path = "src/main.rs"
+
+[[bin]]
+name = "b4-gen-assets"
+path = "src/bin/gen-assets.rs"
+
+[dependencies]
+# CLI parsing + the single command definition shared by every surface.
+clap = { version = "4.5", features = ["derive", "env", "wrap_help"] }
+# Man pages (clap_mangen) and shell completions (clap_complete) are generated
+# from the SAME clap::Command, so they can never drift from --help.
+clap_mangen = "0.2"
+clap_complete = "4.5"
+# Vault container: AES for the key derivation and for decrypting file
+# contents (the RustCrypto implementation). The password hash, RIPEMD-160, is
+# implemented in src/vault so that its state can be wiped.
+aes = { version = "0.8", features = ["zeroize"] }
+# Exact decimal arithmetic for amounts, prices and rates (the vault stores
+# .NET-style 96-bit decimals; floats would lose cents).
+rust_decimal = { version = "1.36", default-features = false, features = ["std"] }
+# The decrypted database. `bundled` compiles DuckDB into the binary, so there is
+# no runtime dependency on a system library. DuckDB over SQLite because the
+# database is queried analytically: exact DECIMAL sums, real DATE columns.
+duckdb = { version = "1", features = ["bundled"] }
+# JSON output.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Password prompt without echo.
+rpassword = "7"
+# Wipe the password and the derived keys from memory when they are dropped.
+zeroize = "1"
+# Error types with readable messages and source chains.
+thiserror = "2"
+# Width of the terminal for table output.
+terminal_size = "0.4"
+
+[dev-dependencies]
+tempfile = "3"
+# Independent RIPEMD-160 to cross-check the one in src/vault.
+ripemd = "0.1"
+
+# Dependencies are built optimised and without debug info even in dev builds:
+# DuckDB compiled at -O0 makes every test run slow and every link large.
+[profile.dev.package."*"]
+opt-level = 2
+debug = false
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+# Lints declared centrally so `cargo build`, the editor (rust-analyzer) and CI
+# all see the same policy, with no need to repeat `-D warnings` everywhere
+# (though CI still passes it as a backstop).
+[lints.rust]
+unsafe_code = "forbid"
+missing_debug_implementations = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+# Flagging unwrap/expect/panic keeps error handling honest: a vault reader must
+# report malformed input, not abort on it. Allowed in tests via clippy.toml.
+unwrap_used = "warn"
+expect_used = "warn"
+todo = "warn"

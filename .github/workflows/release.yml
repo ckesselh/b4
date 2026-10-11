@@ -1,0 +1,188 @@
+# Release: when a GitHub Release is published, build distributable binaries
+# for Linux and macOS (x86_64 + aarch64) and attach them, with a SHA256SUMS
+# file, to that release.
+#
+# b4 bundles DuckDB (C++), so each target is built on a runner of its own
+# platform; the two macOS targets share the arm64 runner. A manual run
+# (workflow_dispatch) is a dry run: it builds and tests the same archives and
+# keeps them as workflow artifacts (where the account's artifact storage has
+# room) without touching any release. It can be
+# limited to the Linux targets, which is cheaper while the repository is
+# private (macOS minutes count tenfold).
+#
+# No untrusted event inputs are interpolated into any run: step.
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      only:
+        description: Targets to build in this dry run
+        type: choice
+        default: all
+        options: [all, linux, macos]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  plan:
+    name: Targets
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      count: ${{ steps.plan.outputs.count }}
+    steps:
+      - id: plan
+        env:
+          ONLY: ${{ inputs.only }}
+        run: |
+          set -euo pipefail
+          # The Linux binaries link glibc and libstdc++ dynamically. They are
+          # built on the oldest hosted image so that they run on any
+          # distribution with glibc 2.35 or newer.
+          all='[
+            {"label": "x86_64-linux",  "os": "linux", "runner": "ubuntu-22.04",     "target": "x86_64-unknown-linux-gnu"},
+            {"label": "aarch64-linux", "os": "linux", "runner": "ubuntu-22.04-arm", "target": "aarch64-unknown-linux-gnu"},
+            {"label": "aarch64-macos", "os": "macos", "runner": "macos-latest",     "target": "aarch64-apple-darwin"},
+            {"label": "x86_64-macos",  "os": "macos", "runner": "macos-latest",     "target": "x86_64-apple-darwin"}
+          ]'
+          # A release always builds every target.
+          if [ "$GITHUB_EVENT_NAME" = release ] || [ -z "$ONLY" ]; then ONLY=all; fi
+          matrix="$(jq -c --arg only "$ONLY" '[.[] | select($only == "all" or .os == $only)]' <<< "$all")"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "count=$(jq length <<< "$matrix")" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: ${{ matrix.label }}
+    needs: plan
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: write # attaches its archive to the release
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Version of this build
+        id: version
+        run: |
+          set -euo pipefail
+          cargo_version="$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -1)"
+          test -n "$cargo_version"
+          if [ "$GITHUB_EVENT_NAME" = release ]; then
+            # The tag is the release; it has to say what the binary says.
+            if [ "${GITHUB_REF_NAME#v}" != "$cargo_version" ]; then
+              echo "tag $GITHUB_REF_NAME does not match Cargo.toml version $cargo_version" >&2
+              exit 1
+            fi
+            grep -q "^## \[$cargo_version\]" CHANGELOG.md || {
+              echo "CHANGELOG.md has no section for $cargo_version" >&2
+              exit 1
+            }
+          fi
+          echo "version=$cargo_version" >> "$GITHUB_OUTPUT"
+
+      # The x86_64 macOS binary is cross-compiled on the arm64 runner and runs
+      # there under Rosetta for the smoke test and the completions.
+      - name: Rosetta
+        if: matrix.target == 'x86_64-apple-darwin'
+        run: softwareupdate --install-rosetta --agree-to-license || true
+
+      - name: Build
+        env:
+          TARGET: ${{ matrix.target }}
+        run: cargo build --release --locked --target "$TARGET" --bin b4 --bin b4-gen-assets
+
+      - name: Smoke test on the demo vault
+        env:
+          TARGET: ${{ matrix.target }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          b4="$PWD/target/$TARGET/release/b4"
+          test "$("$b4" --version)" = "b4 $VERSION"
+          work="$(mktemp -d)"
+          printf 'demo' | "$b4" decrypt tests/fixtures/vault/demo.sub "$work/b4.duckdb" --password-stdin
+          "$b4" --db "$work/b4.duckdb" status
+          test "$("$b4" --db "$work/b4.duckdb" --output csv sql 'select count(*) from bookings' | tail -1)" = 634
+
+      - name: Package
+        env:
+          TARGET: ${{ matrix.target }}
+          LABEL: ${{ matrix.label }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          stage="b4-${VERSION}-${LABEL}"
+          assets="$(mktemp -d)"
+          "target/$TARGET/release/b4-gen-assets" "$assets"
+          # The committed man pages are what the release documents.
+          for page in "$assets"/*.1; do
+            diff "$page" "man/$(basename "$page")"
+          done
+          mkdir -p "$stage/man" "$stage/completions" "$stage/docs" dist
+          cp "target/$TARGET/release/b4" "$stage/"
+          cp man/*.1 "$stage/man/"
+          cp "$assets/b4.bash" "$assets/_b4" "$assets/b4.fish" "$stage/completions/"
+          cp README.md LICENSE CHANGELOG.md SECURITY.md "$stage/"
+          cp docs/schema.md "$stage/docs/"
+          tar -czf "dist/${stage}.tar.gz" "$stage"
+          ls -l dist
+
+      # A release gets the archive directly, so that publishing does not
+      # depend on the account's artifact storage.
+      - name: Attach to the release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" dist/*.tar.gz --clobber
+
+      # A dry run keeps the archive as a workflow artifact where it can. A
+      # full artifact store must not fail the run: the build, the test and
+      # the packaging above are what a dry run is for.
+      - name: Checksum of the archive
+        run: sha256sum dist/*.tar.gz
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'release'
+        continue-on-error: true
+        with:
+          name: b4-${{ matrix.label }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+
+  checksums:
+    name: Checksums
+    if: github.event_name == 'release'
+    needs: [plan, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Collect the archives of the release
+        run: gh release download "$GITHUB_REF_NAME" --pattern 'b4-*.tar.gz' --dir dist
+      - name: Checksums
+        env:
+          EXPECTED: ${{ needs.plan.outputs.count }}
+        run: |
+          set -euo pipefail
+          cd dist
+          test "$(find . -maxdepth 1 -name "*.tar.gz" | wc -l)" = "$EXPECTED"
+          sha256sum -- *.tar.gz > SHA256SUMS
+          cat SHA256SUMS
+      - name: Attach to the release
+        run: gh release upload "$GITHUB_REF_NAME" dist/SHA256SUMS --clobber

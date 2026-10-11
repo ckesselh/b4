@@ -1,0 +1,88 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-export 1  "b4 0.1.0" 
+.SH NAME
+b4\-export \- Export tables to files, one file per table
+.SH SYNOPSIS
+\fBb4 export\fR [\fB\-\-db\fR] [\fB\-\-format\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-table\fR] [\fB\-\-no\-header\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] <\fIDIR\fR> 
+.SH DESCRIPTION
+Export tables to files, one file per table
+.PP
+Write the tables of the database into DIR, one file per table, named after the table (bookings.csv, accounts.csv, ...). DIR is created if it does not exist; existing files of the same name are replaced.
+.PP
+The files hold the exact values. The format is chosen with \-\-format, or with the global \-\-output when that is csv or jsonl. A table whose name cannot be a file name on every system (a path separator, a colon, a device name of Windows such as NUL) is not exported.
+.SH OPTIONS
+.TP
+\fB\-\-format\fR \fI<FORMAT>\fR
+The file format [default: csv]
+
+Without \-\-format, the global \-\-output selects the format when it is csv or jsonl. `\-\-output table` and `\-\-output json` are errors, and so is an \-\-output that contradicts \-\-format: export writes csv and jsonl only.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.IP \(bu 2
+jsonl: One JSON object per line
+.RE
+.TP
+\fB\-\-table\fR \fI<TABLE>\fR
+Export only this table; repeat for several tables
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.TP
+<\fIDIR\fR>
+The directory to write the files into
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 export ./export
+    Write every table as CSV into ./export.
+b4 export ./export \-\-format jsonl \-\-table bookings \-\-table accounts
+    Write two tables as JSON lines.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1)
+.SH VERSION
+v0.1.0

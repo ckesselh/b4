@@ -1,0 +1,76 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-sql 1  "b4 0.1.0" 
+.SH NAME
+b4\-sql \- Run a read\-only SQL query against the database
+.SH SYNOPSIS
+\fBb4 sql\fR [\fB\-\-db\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-no\-header\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] <\fIQUERY\fR> 
+.SH DESCRIPTION
+Run a read\-only SQL query against the database
+.PP
+Run one SQL query against the database and print the result in the chosen output format. `b4 schema` lists the tables and columns.
+.PP
+The query can only read this database. The connection is read\-only and cannot reach anything else: no other files, no ATTACH, no extensions, no network, and no change of these settings. That makes it safe to run a query written by someone else, or by an agent. The switches of the database engine that are not settings (PRAGMA enable_profiling, enable_logging, enable_progress_bar and the like) and the functions query() and write_log() are refused as well.
+.PP
+A query may use up to 1 GiB of memory and cannot use the disk; one that needs more fails. csv, jsonl and json are written while the result arrives, however large it is. table has to hold the whole result to size its columns and stops at 100000 rows: use another format or a LIMIT for more. A query on standard input may be up to 1 MiB long.
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.TP
+<\fIQUERY\fR>
+The SQL query, or `\-` to read it from standard input
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 sql \(aqselect count(*) from bookings\(aq
+    Count the bookings.
+b4 sql \(aqselect category, sum(amount) from bookings where counted group by 1\(aq
+    Net amount per category, every booking counted once.
+b4 sql \- < report.sql
+    Read the query from a file.
+b4 sql \(aqselect * from accounts\(aq \-\-output jsonl
+    Every column of every account, one JSON object per line.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1)
+.SH VERSION
+v0.1.0

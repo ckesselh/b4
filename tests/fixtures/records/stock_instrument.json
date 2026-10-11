@@ -1,0 +1,449 @@
+{
+  "record": "stock_instrument",
+  "specification": "docs/format/05-master-data-and-portfolio.md, section 3.6",
+  "collection_file": "stock_instrument.bin",
+  "collection_size": 1031,
+  "collection_sha256": "e5ee9d2d1376f635eed906e3e40325b52e9ea0815fa1e1886bd3337180f43b30",
+  "reader_context": {"language": "de-DE", "application_default_currency": "EUR", "application_default_country": "DE"},
+  "fields": ["oid", "update_stamp", "isin", "name", "price_currency", "splits"],
+  "fields_in_memory_only": [],
+  "records": [
+    {
+      "index": 0,
+      "about": "every field set",
+      "offset": 0,
+      "record_size": 83,
+      "record_hex": "5300000011eb722df15be52d0c00444530303054455354303137170073746f636b5f696e737472756d656e745f6e616d6523314555521b0032303230303133312f522f342f0a32303231303232382f2f31302f",
+      "written": {
+        "oid": 762506001,
+        "update_stamp": 770006001,
+        "isin": {"text":"DE000TEST017","kind":1,"is_null":false,"isin":"DE000TEST017","isin_fails":false},
+        "name": "stock_instrument_name#1",
+        "price_currency": "EUR",
+        "splits": [{"date":"2020-01-31T00:00:00.0000000","reverse":true,"factor":4},{"date":"2021-02-28T00:00:00.0000000","reverse":false,"factor":10}]
+      },
+      "read": {
+        "oid": 762506001,
+        "update_stamp": 770006001,
+        "isin": {"text":"DE000TEST017","kind":1,"is_null":false,"isin":"DE000TEST017","isin_fails":false},
+        "name": "stock_instrument_name#1",
+        "price_currency": "EUR",
+        "splits": [{"date":"2020-01-31T00:00:00.0000000","reverse":true,"factor":4},{"date":"2021-02-28T00:00:00.0000000","reverse":false,"factor":10}]
+      }
+    },
+    {
+      "index": 1,
+      "about": "no field set",
+      "offset": 87,
+      "record_size": 21,
+      "record_hex": "1500000012eb722df25be52d000000000000000000",
+      "written": {
+        "oid": 762506002,
+        "update_stamp": 770006002,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": null,
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506002,
+        "update_stamp": 770006002,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": null,
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 2,
+      "about": "identifier with the ISIN prefix",
+      "offset": 112,
+      "record_size": 56,
+      "record_hex": "3800000013eb722df35be52d0c00555330305445535430303234170073746f636b5f696e737472756d656e745f6e616d6523335553440000",
+      "written": {
+        "oid": 762506003,
+        "update_stamp": 770006003,
+        "isin": {"text":"US00TEST0024","kind":1,"is_null":false,"isin":"US00TEST0024","isin_fails":false},
+        "name": "stock_instrument_name#3",
+        "price_currency": "USD",
+        "splits": null
+      },
+      "read": {
+        "oid": 762506003,
+        "update_stamp": 770006003,
+        "isin": {"text":"US00TEST0024","kind":1,"is_null":false,"isin":"US00TEST0024","isin_fails":false},
+        "name": "stock_instrument_name#3",
+        "price_currency": "USD",
+        "splits": null
+      }
+    },
+    {
+      "index": 3,
+      "about": "German national number with prefix",
+      "offset": 172,
+      "record_size": 56,
+      "record_hex": "3800000014eb722df45be52d0c00444530303031323334353635170073746f636b5f696e737472756d656e745f6e616d6523340000000000",
+      "written": {
+        "oid": 762506004,
+        "update_stamp": 770006004,
+        "isin": {"text":"/DE/123456","kind":2,"is_null":false,"isin":"DE0001234565","isin_fails":false},
+        "name": "stock_instrument_name#4",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506004,
+        "update_stamp": 770006004,
+        "isin": {"text":"DE0001234565","kind":1,"is_null":false,"isin":"DE0001234565","isin_fails":false},
+        "name": "stock_instrument_name#4",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 4,
+      "about": "German national number with the other prefix",
+      "offset": 232,
+      "record_size": 56,
+      "record_hex": "3800000015eb722df55be52d0c00444530303041314232433335170073746f636b5f696e737472756d656e745f6e616d6523350000000000",
+      "written": {
+        "oid": 762506005,
+        "update_stamp": 770006005,
+        "isin": {"text":"/DE/A1B2C3","kind":2,"is_null":false,"isin":"DE000A1B2C35","isin_fails":false},
+        "name": "stock_instrument_name#5",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506005,
+        "update_stamp": 770006005,
+        "isin": {"text":"DE000A1B2C35","kind":1,"is_null":false,"isin":"DE000A1B2C35","isin_fails":false},
+        "name": "stock_instrument_name#5",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 5,
+      "about": "bare six characters",
+      "offset": 292,
+      "record_size": 56,
+      "record_hex": "3800000016eb722df65be52d0c00444530303041314232433335170073746f636b5f696e737472756d656e745f6e616d6523360000000000",
+      "written": {
+        "oid": 762506006,
+        "update_stamp": 770006006,
+        "isin": {"text":"/DE/A1B2C3","kind":2,"is_null":false,"isin":"DE000A1B2C35","isin_fails":false},
+        "name": "stock_instrument_name#6",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506006,
+        "update_stamp": 770006006,
+        "isin": {"text":"DE000A1B2C35","kind":1,"is_null":false,"isin":"DE000A1B2C35","isin_fails":false},
+        "name": "stock_instrument_name#6",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 6,
+      "about": "ticker symbol",
+      "offset": 352,
+      "record_size": 44,
+      "record_hex": "2c00000017eb722df75be52d0000170073746f636b5f696e737472756d656e745f6e616d6523370000000000",
+      "written": {
+        "oid": 762506007,
+        "update_stamp": 770006007,
+        "isin": {"text":"/TS/TEST","kind":3,"is_null":false,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#7",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506007,
+        "update_stamp": 770006007,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#7",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 7,
+      "about": "bilateral identifier",
+      "offset": 400,
+      "record_size": 44,
+      "record_hex": "2c00000018eb722df85be52d0000170073746f636b5f696e737472756d656e745f6e616d6523380000000000",
+      "written": {
+        "oid": 762506008,
+        "update_stamp": 770006008,
+        "isin": {"text":"/XX/TEST0008","kind":4,"is_null":false,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#8",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506008,
+        "update_stamp": 770006008,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#8",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 8,
+      "about": "German national number in the country form",
+      "offset": 448,
+      "record_size": 56,
+      "record_hex": "3800000019eb722df95be52d0c00444530303031323334353635170073746f636b5f696e737472756d656e745f6e616d6523390000000000",
+      "written": {
+        "oid": 762506009,
+        "update_stamp": 770006009,
+        "isin": {"text":"/DE/123456","kind":2,"is_null":false,"isin":"DE0001234565","isin_fails":false},
+        "name": "stock_instrument_name#9",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506009,
+        "update_stamp": 770006009,
+        "isin": {"text":"DE0001234565","kind":1,"is_null":false,"isin":"DE0001234565","isin_fails":false},
+        "name": "stock_instrument_name#9",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 9,
+      "about": "national number of another country",
+      "offset": 508,
+      "record_size": 45,
+      "record_hex": "2d0000001aeb722dfa5be52d0000180073746f636b5f696e737472756d656e745f6e616d652331300000000000",
+      "written": {
+        "oid": 762506010,
+        "update_stamp": 770006010,
+        "isin": {"text":"/US/123456789","kind":2,"is_null":false,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#10",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506010,
+        "update_stamp": 770006010,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#10",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 10,
+      "about": "German national number of another length",
+      "offset": 557,
+      "record_size": 45,
+      "record_hex": "2d0000001beb722dfb5be52d0000180073746f636b5f696e737472756d656e745f6e616d652331310000000000",
+      "written": {
+        "oid": 762506011,
+        "update_stamp": 770006011,
+        "isin": {"text":"/DE/1234567","kind":2,"is_null":false,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#11",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506011,
+        "update_stamp": 770006011,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#11",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 11,
+      "about": "text that is no identifier",
+      "offset": 606,
+      "record_size": 45,
+      "record_hex": "2d0000001ceb722dfc5be52d0000180073746f636b5f696e737472756d656e745f6e616d652331320000000000",
+      "written": {
+        "oid": 762506012,
+        "update_stamp": 770006012,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#12",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506012,
+        "update_stamp": 770006012,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#12",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 12,
+      "about": "ISIN with a wrong check digit",
+      "offset": 655,
+      "record_size": 45,
+      "record_hex": "2d0000001deb722dfd5be52d0000180073746f636b5f696e737472756d656e745f6e616d652331330000000000",
+      "written": {
+        "oid": 762506013,
+        "update_stamp": 770006013,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#13",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506013,
+        "update_stamp": 770006013,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#13",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 13,
+      "about": "ISIN in lower case",
+      "offset": 704,
+      "record_size": 45,
+      "record_hex": "2d0000001eeb722dfe5be52d0000180073746f636b5f696e737472756d656e745f6e616d652331340000000000",
+      "written": {
+        "oid": 762506014,
+        "update_stamp": 770006014,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#14",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506014,
+        "update_stamp": 770006014,
+        "isin": {"text":null,"kind":0,"is_null":true,"isin":null,"isin_fails":false},
+        "name": "stock_instrument_name#14",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 14,
+      "about": "ISIN with surrounding blanks",
+      "offset": 753,
+      "record_size": 57,
+      "record_hex": "390000001feb722dff5be52d0c00465230303030544553543136180073746f636b5f696e737472756d656e745f6e616d652331350000000000",
+      "written": {
+        "oid": 762506015,
+        "update_stamp": 770006015,
+        "isin": {"text":"FR0000TEST16","kind":1,"is_null":false,"isin":"FR0000TEST16","isin_fails":false},
+        "name": "stock_instrument_name#15",
+        "price_currency": null,
+        "splits": null
+      },
+      "read": {
+        "oid": 762506015,
+        "update_stamp": 770006015,
+        "isin": {"text":"FR0000TEST16","kind":1,"is_null":false,"isin":"FR0000TEST16","isin_fails":false},
+        "name": "stock_instrument_name#15",
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 15,
+      "about": "one ordinary split",
+      "offset": 814,
+      "record_size": 45,
+      "record_hex": "2d00000020eb722d005ce52d0c0044453030305445535431363500000000000c0032303139303630332f2f322f",
+      "written": {
+        "oid": 762506016,
+        "update_stamp": 770006016,
+        "isin": {"text":"DE000TEST165","kind":1,"is_null":false,"isin":"DE000TEST165","isin_fails":false},
+        "name": null,
+        "price_currency": null,
+        "splits": [{"date":"2019-06-03T00:00:00.0000000","reverse":false,"factor":2}]
+      },
+      "read": {
+        "oid": 762506016,
+        "update_stamp": 770006016,
+        "isin": {"text":"DE000TEST165","kind":1,"is_null":false,"isin":"DE000TEST165","isin_fails":false},
+        "name": null,
+        "price_currency": null,
+        "splits": [{"date":"2019-06-03T00:00:00.0000000","reverse":false,"factor":2}]
+      }
+    },
+    {
+      "index": 16,
+      "about": "empty split list",
+      "offset": 863,
+      "record_size": 33,
+      "record_hex": "2100000021eb722d015ce52d0c0044453030305445535431373300000000000000",
+      "written": {
+        "oid": 762506017,
+        "update_stamp": 770006017,
+        "isin": {"text":"DE000TEST173","kind":1,"is_null":false,"isin":"DE000TEST173","isin_fails":false},
+        "name": null,
+        "price_currency": null,
+        "splits": []
+      },
+      "read": {
+        "oid": 762506017,
+        "update_stamp": 770006017,
+        "isin": {"text":"DE000TEST173","kind":1,"is_null":false,"isin":"DE000TEST173","isin_fails":false},
+        "name": null,
+        "price_currency": null,
+        "splits": null
+      }
+    },
+    {
+      "index": 17,
+      "about": "split with a time of day and a large factor",
+      "offset": 900,
+      "record_size": 52,
+      "record_hex": "3400000022eb722d025ce52d0c004445303030544553543138310000000000130032303232313233312f522f313030303030302f",
+      "written": {
+        "oid": 762506018,
+        "update_stamp": 770006018,
+        "isin": {"text":"DE000TEST181","kind":1,"is_null":false,"isin":"DE000TEST181","isin_fails":false},
+        "name": null,
+        "price_currency": null,
+        "splits": [{"date":"2022-12-31T23:59:59.0000000","reverse":true,"factor":1000000}]
+      },
+      "read": {
+        "oid": 762506018,
+        "update_stamp": 770006018,
+        "isin": {"text":"DE000TEST181","kind":1,"is_null":false,"isin":"DE000TEST181","isin_fails":false},
+        "name": null,
+        "price_currency": null,
+        "splits": [{"date":"2022-12-31T00:00:00.0000000","reverse":true,"factor":1000000}]
+      }
+    },
+    {
+      "index": 18,
+      "about": "currency in lower case, name with a line break",
+      "offset": 956,
+      "record_size": 71,
+      "record_hex": "4700000023eb722d035ce52d0c00444530303054455354313939260073746f636b5f696e737472756d656e745f6e616d65233139206c696e6520310a6c696e6520327573640000",
+      "written": {
+        "oid": 762506019,
+        "update_stamp": 770006019,
+        "isin": {"text":"DE000TEST199","kind":1,"is_null":false,"isin":"DE000TEST199","isin_fails":false},
+        "name": "stock_instrument_name#19 line 1\u000aline 2",
+        "price_currency": "usd",
+        "splits": null
+      },
+      "read": {
+        "oid": 762506019,
+        "update_stamp": 770006019,
+        "isin": {"text":"DE000TEST199","kind":1,"is_null":false,"isin":"DE000TEST199","isin_fails":false},
+        "name": "stock_instrument_name#19 line 1\u000aline 2",
+        "price_currency": "usd",
+        "splits": null
+      }
+    }
+  ]
+}

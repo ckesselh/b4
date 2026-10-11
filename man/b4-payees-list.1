@@ -1,0 +1,79 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-payees-list 1  "b4 0.1.0" 
+.SH NAME
+b4\-payees\-list \- List payees
+.SH SYNOPSIS
+\fBb4 payees list\fR [\fB\-\-db\fR] [\fB\-\-filter\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-no\-header\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] 
+.SH DESCRIPTION
+List payees
+.PP
+List the payees saved in the vault\*(Aqs address book, ordered by name (ignoring case; letters outside A to Z, such as umlauts, come after Z).
+.PP
+Table output shows name, IBAN, BIC, bank, town and the number of bookings of each payee. The other formats carry every column of the `payees` table under its own name (see `b4 schema payees`), followed by `booking_count`.
+.PP
+Bookings do not refer to an address book entry; they only carry the name of the other party. `booking_count` is therefore a match by name: the number of bookings whose payee name equals the payee\*(Aqs name, ignoring case and surrounding blanks. Payees that share a name share the number, and a booking that spells the name differently is not counted. Every booking counts once: a split booking or a collective booking counts as its parts, not as parts plus the whole. Pending bookings are included.
+.SH OPTIONS
+.TP
+\fB\-\-filter\fR \fI<TEXT>\fR
+Only payees with TEXT in one of their text fields, ignoring case
+
+Keeps the payees that have TEXT as a substring of their name, IBAN, BIC, account number, bank code, address, bank name or address, default purpose, default category, e\-mail address, customer number or notes. Upper and lower case are the same. TEXT is taken literally: `%` and `_` are ordinary characters. An IBAN is also found when TEXT has blanks in it.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 payees list
+    List all saved payees.
+b4 payees list \-\-filter versicherung
+    Payees with "versicherung" in one of their fields.
+b4 payees list \-\-filter \(aqDE49 9999\(aq
+    Payees whose IBAN contains DE499999.
+b4 payees list \-\-output csv > payees.csv
+    Every stored field of every payee, as CSV.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1),
+\fBb4\-payees\fR(1)
+.SH VERSION
+v0.1.0

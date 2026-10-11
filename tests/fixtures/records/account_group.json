@@ -1,0 +1,153 @@
+{
+  "record_type": "account_group",
+  "file": "account_group.bin",
+  "records": [
+    {
+      "about": "every field set",
+      "offset": 0,
+      "record_size": 41,
+      "set": {
+        "oid": 800300001,
+        "update_stamp": 800400001,
+        "position": 3,
+        "name": "name#1",
+        "description": "description#1",
+        "flags": 1
+      },
+      "read": {
+        "oid": 800300001,
+        "update_stamp": 800400001,
+        "position": 3,
+        "name": "name#1",
+        "description": "description#1",
+        "flags": 1
+      }
+    },
+    {
+      "about": "strings null",
+      "offset": 45,
+      "record_size": 22,
+      "set": {
+        "oid": 800300002,
+        "update_stamp": 800400002,
+        "position": 0,
+        "name": null,
+        "description": null,
+        "flags": 2
+      },
+      "read": {
+        "oid": 800300002,
+        "update_stamp": 800400002,
+        "position": 0,
+        "name": null,
+        "description": null,
+        "flags": 2
+      }
+    },
+    {
+      "about": "strings empty, negative position",
+      "offset": 71,
+      "record_size": 22,
+      "set": {
+        "oid": 800300003,
+        "update_stamp": 800400003,
+        "position": -1,
+        "name": "",
+        "description": "",
+        "flags": 4
+      },
+      "read": {
+        "oid": 800300003,
+        "update_stamp": 800400003,
+        "position": 65535,
+        "name": null,
+        "description": null,
+        "flags": 4
+      }
+    },
+    {
+      "about": "position wider than 16 bits, several lines, non-ASCII",
+      "offset": 97,
+      "record_size": 68,
+      "set": {
+        "oid": 800300004,
+        "update_stamp": 800400004,
+        "position": 70000,
+        "name": "Grüße € 日本",
+        "description": "line one\nline two\n\nline four",
+        "flags": 7
+      },
+      "read": {
+        "oid": 800300004,
+        "update_stamp": 800400004,
+        "position": 4464,
+        "name": "Grüße € 日本",
+        "description": "line one\nline two\n\nline four",
+        "flags": 7
+      }
+    },
+    {
+      "about": "largest position, no flags",
+      "offset": 169,
+      "record_size": 41,
+      "set": {
+        "oid": 800300005,
+        "update_stamp": 800400005,
+        "position": 65535,
+        "name": "name#5",
+        "description": "description#5",
+        "flags": 0
+      },
+      "read": {
+        "oid": 800300005,
+        "update_stamp": 800400005,
+        "position": 65535,
+        "name": "name#5",
+        "description": "description#5",
+        "flags": 0
+      }
+    },
+    {
+      "about": "undefined flag bits",
+      "offset": 214,
+      "record_size": 28,
+      "set": {
+        "oid": 800300006,
+        "update_stamp": 800400006,
+        "position": 32768,
+        "name": "name#6",
+        "description": null,
+        "flags": -8
+      },
+      "read": {
+        "oid": 800300006,
+        "update_stamp": 800400006,
+        "position": 32768,
+        "name": "name#6",
+        "description": null,
+        "flags": -8
+      }
+    },
+    {
+      "about": "a record with every field zero or null",
+      "offset": 246,
+      "record_size": 22,
+      "set": {
+        "oid": 0,
+        "update_stamp": 0,
+        "position": 0,
+        "name": null,
+        "description": null,
+        "flags": 0
+      },
+      "read": {
+        "oid": 0,
+        "update_stamp": 0,
+        "position": 0,
+        "name": null,
+        "description": null,
+        "flags": 0
+      }
+    }
+  ]
+}

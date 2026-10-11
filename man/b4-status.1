@@ -1,0 +1,74 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-status 1  "b4 0.1.0" 
+.SH NAME
+b4\-status \- Describe the database and whether it is stale
+.SH SYNOPSIS
+\fBb4 status\fR [\fB\-\-check\fR] [\fB\-\-db\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-no\-header\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] 
+.SH DESCRIPTION
+Describe the database and whether it is stale
+.PP
+Show where the database is and what is in it: path and size, the b4 and schema version that wrote it, the vault it came from (path, id and modification stamp at decrypt time), when it was decrypted, the number of rows per table, and the warnings recorded while decrypting.
+.PP
+If the vault is still readable at its recorded path, it is compared with what was recorded when it was decrypted: the vault id, the modification stamp in its header, the size of the file and, when these three are the same, a checksum of its content. Status says "up to date", "vault changed since decrypt", "another vault is at that path now" or "vault not reachable", and names the comparisons it made. No password is needed; the file is only read in full for the checksum.
+.PP
+A database that does not record one of these values is never called up to date: status says "database metadata incomplete", and `b4 decrypt` writes the database again.
+.SH OPTIONS
+.TP
+\fB\-\-check\fR
+Exit with status 1 unless the database is up to date
+
+That is: if the vault changed, another vault is at its path, the vault cannot be reached, or the database does not record what the comparison needs.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 status
+    Describe ./b4.duckdb.
+b4 status \-\-check || b4 decrypt \(ti/Banking/Household.sub
+    Decrypt again only when the vault has changed.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1)
+.SH VERSION
+v0.1.0

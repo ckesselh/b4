@@ -1,0 +1,309 @@
+{
+  "record": "exchange_rate",
+  "specification": "docs/format/05-master-data-and-portfolio.md, section 3.5",
+  "collection_file": "exchange_rate.bin",
+  "collection_size": 506,
+  "collection_sha256": "63f5ff0814b9c4c877d6dc2c450ee802b5b7c749e38e937a2e8501715876b4bc",
+  "reader_context": {"language": "de-DE", "application_default_currency": "EUR", "application_default_country": "DE"},
+  "fields": ["oid", "update_stamp", "base_currency", "target_currency", "quote_time", "quote_rate", "fixed_rate", "currency_class"],
+  "fields_in_memory_only": ["fixed_rate", "currency_class"],
+  "records": [
+    {
+      "index": 0,
+      "about": "every field set",
+      "offset": 0,
+      "record_size": 42,
+      "record_hex": "2a00000029e7722d0958e52d45555255534400a1f9bc593cdc08522a0000000000000000000000000400",
+      "written": {
+        "oid": 762505001,
+        "update_stamp": 770005001,
+        "base_currency": "EUR",
+        "target_currency": "USD",
+        "quote_time": "2024-03-04T14:45:30.0000000",
+        "quote_rate": "1.0834",
+        "fixed_rate": true,
+        "currency_class": 4
+      },
+      "read": {
+        "oid": 762505001,
+        "update_stamp": 770005001,
+        "base_currency": "EUR",
+        "target_currency": "USD",
+        "quote_time": "2024-03-04T14:45:30.0000000",
+        "quote_rate": "1.0834",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 1,
+      "about": "no field set",
+      "offset": 46,
+      "record_size": 42,
+      "record_hex": "2a0000002ae7722d0a58e52d000000000000000000000000000000000000000000000000000000000000",
+      "written": {
+        "oid": 762505002,
+        "update_stamp": 770005002,
+        "base_currency": null,
+        "target_currency": null,
+        "quote_time": null,
+        "quote_rate": "0",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505002,
+        "update_stamp": 770005002,
+        "base_currency": null,
+        "target_currency": null,
+        "quote_time": null,
+        "quote_rate": "0",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 2,
+      "about": "pair quoted the other way round",
+      "offset": 92,
+      "record_size": 42,
+      "record_hex": "2a0000002be7722d0b58e52d555344455552008af8faf939dc080e240000000000000000000000000400",
+      "written": {
+        "oid": 762505003,
+        "update_stamp": 770005003,
+        "base_currency": "USD",
+        "target_currency": "EUR",
+        "quote_time": "2024-03-01T14:15:00.0000000",
+        "quote_rate": "0.9230",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505003,
+        "update_stamp": 770005003,
+        "base_currency": "USD",
+        "target_currency": "EUR",
+        "quote_time": "2024-03-01T14:15:00.0000000",
+        "quote_rate": "0.9230",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 3,
+      "about": "gold quoted per euro",
+      "offset": 138,
+      "record_size": 42,
+      "record_hex": "2a0000002ce7722d0c58e52d455552584155008033b44b3adc0869360300000000000000000000000200",
+      "written": {
+        "oid": 762505004,
+        "update_stamp": 770005004,
+        "base_currency": "EUR",
+        "target_currency": "XAU",
+        "quote_time": "2024-03-02T00:00:00.0000000",
+        "quote_rate": "2105.37",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505004,
+        "update_stamp": 770005004,
+        "base_currency": "EUR",
+        "target_currency": "XAU",
+        "quote_time": "2024-03-02T00:00:00.0000000",
+        "quote_rate": "2105.37",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 4,
+      "about": "gold quoted in ounces per euro",
+      "offset": 184,
+      "record_size": 42,
+      "record_hex": "2a0000002de7722d0d58e52d455552584155008033b44b3adc08db010000000000000000000000000600",
+      "written": {
+        "oid": 762505005,
+        "update_stamp": 770005005,
+        "base_currency": "EUR",
+        "target_currency": "XAU",
+        "quote_time": "2024-03-02T00:00:00.0000000",
+        "quote_rate": "0.000475",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505005,
+        "update_stamp": 770005005,
+        "base_currency": "EUR",
+        "target_currency": "XAU",
+        "quote_time": "2024-03-02T00:00:00.0000000",
+        "quote_rate": "0.000475",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 5,
+      "about": "neither side is the euro",
+      "offset": 230,
+      "record_size": 42,
+      "record_hex": "2a0000002ee7722d0e58e52d555344434846000000000000000058000000000000000000000000000200",
+      "written": {
+        "oid": 762505006,
+        "update_stamp": 770005006,
+        "base_currency": "USD",
+        "target_currency": "CHF",
+        "quote_time": null,
+        "quote_rate": "0.88",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505006,
+        "update_stamp": 770005006,
+        "base_currency": "USD",
+        "target_currency": "CHF",
+        "quote_time": null,
+        "quote_rate": "0.88",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 6,
+      "about": "target missing",
+      "offset": 276,
+      "record_size": 42,
+      "record_hex": "2a0000002fe7722d0f58e52d455552000000000000000000000001000000000000000000000000000000",
+      "written": {
+        "oid": 762505007,
+        "update_stamp": 770005007,
+        "base_currency": "EUR",
+        "target_currency": null,
+        "quote_time": null,
+        "quote_rate": "1",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505007,
+        "update_stamp": 770005007,
+        "base_currency": "EUR",
+        "target_currency": null,
+        "quote_time": null,
+        "quote_rate": "1",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 7,
+      "about": "codes in lower case, too short and too long",
+      "offset": 322,
+      "record_size": 42,
+      "record_hex": "2a00000030e7722d1058e52d65757255530000000000000000000f000000000000000000000000000100",
+      "written": {
+        "oid": 762505008,
+        "update_stamp": 770005008,
+        "base_currency": "eur",
+        "target_currency": "US",
+        "quote_time": null,
+        "quote_rate": "1.5",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505008,
+        "update_stamp": 770005008,
+        "base_currency": "eur",
+        "target_currency": "US",
+        "quote_time": null,
+        "quote_rate": "1.5",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 8,
+      "about": "codes too long",
+      "offset": 368,
+      "record_size": 42,
+      "record_hex": "2a00000031e7722d1158e52d45555255534400000000000000000f000000000000000000000000000100",
+      "written": {
+        "oid": 762505009,
+        "update_stamp": 770005009,
+        "base_currency": "EURO",
+        "target_currency": "USDX",
+        "quote_time": null,
+        "quote_rate": "1.5",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505009,
+        "update_stamp": 770005009,
+        "base_currency": "EUR",
+        "target_currency": "USD",
+        "quote_time": null,
+        "quote_rate": "1.5",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 9,
+      "about": "negative and very small rate",
+      "offset": 414,
+      "record_size": 42,
+      "record_hex": "2a00000032e7722d1258e52d455552425443000000000000000001000000000000000000000000001c80",
+      "written": {
+        "oid": 762505010,
+        "update_stamp": 770005010,
+        "base_currency": "EUR",
+        "target_currency": "BTC",
+        "quote_time": null,
+        "quote_rate": "-0.0000000000000000000000000001",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505010,
+        "update_stamp": 770005010,
+        "base_currency": "EUR",
+        "target_currency": "BTC",
+        "quote_time": null,
+        "quote_rate": "-0.0000000000000000000000000001",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    },
+    {
+      "index": 10,
+      "about": "time marked as UTC",
+      "offset": 460,
+      "record_size": 42,
+      "record_hex": "2a00000033e7722d1358e52d45555247425000c0e3fa9a3bdc0871210000000000000000000000000400",
+      "written": {
+        "oid": 762505011,
+        "update_stamp": 770005011,
+        "base_currency": "EUR",
+        "target_currency": "GBP",
+        "quote_time": "2024-03-03T16:00:00.0000000Z",
+        "quote_rate": "0.8561",
+        "fixed_rate": false,
+        "currency_class": 0
+      },
+      "read": {
+        "oid": 762505011,
+        "update_stamp": 770005011,
+        "base_currency": "EUR",
+        "target_currency": "GBP",
+        "quote_time": "2024-03-03T16:00:00.0000000",
+        "quote_rate": "0.8561",
+        "fixed_rate": false,
+        "currency_class": 0
+      }
+    }
+  ]
+}

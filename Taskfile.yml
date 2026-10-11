@@ -1,0 +1,81 @@
+version: '3'
+
+# Dev tasks for b4. Run `task --list` to see everything. Enter the flake
+# devShell (`nix develop` / direnv) so cargo and go-task are on PATH.
+
+vars:
+  CARGO: cargo
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  build:
+    desc: Build the binary (target/release/b4)
+    cmds:
+      - "{{.CARGO}} build --release"
+
+  run:
+    desc: 'Build & run, e.g. `task run -- accounts list`'
+    cmds:
+      - "{{.CARGO}} run --bin b4 -- {{.CLI_ARGS}}"
+
+  test:
+    desc: Run the unit tests
+    cmds:
+      - "{{.CARGO}} test"
+
+  docs:
+    desc: Regenerate the man pages in man/ from the clap command
+    cmds:
+      # gen-assets emits the man pages + shell completions; completions are
+      # build-time artifacts produced by Nix, so only the man pages are committed.
+      - rm -rf .gen && {{.CARGO}} run --quiet --bin b4-gen-assets -- .gen
+      - rm -f man/*.1 && cp .gen/*.1 man/
+      - rm -rf .gen
+      # docs/schema.md is rendered from the schema definition by a test.
+      - B4_UPDATE_DOCS=1 {{.CARGO}} test --quiet --test schema the_schema_doc_is_current
+
+  docs-check:
+    desc: Verify the committed man pages match the clap command
+    cmds:
+      - task: docs
+      - git diff --exit-code -- man/
+      # A page of a new command is untracked, and `git diff` does not see it.
+      - test -z "$(git status --porcelain -- man/)"
+
+  fmt:
+    desc: Format all source files
+    cmds:
+      - "{{.CARGO}} fmt"
+
+  fmt-check:
+    desc: Verify formatting without changing files
+    cmds:
+      - "{{.CARGO}} fmt --check"
+
+  lint:
+    desc: Static analysis with clippy (warnings are errors)
+    cmds:
+      - "{{.CARGO}} clippy --all-targets -- -D warnings"
+
+  check:
+    desc: All quality gates (fmt-check + lint + test + docs-check), run before pushing
+    cmds:
+      - task: fmt-check
+      - task: lint
+      - task: test
+      - task: docs-check
+
+  nix-build:
+    desc: Build the Nix package
+    cmds:
+      - nix build .#b4
+
+  clean:
+    desc: Remove build artifacts
+    cmds:
+      - rm -rf target result

@@ -1,0 +1,193 @@
+{
+  "record_type": "setting",
+  "file": "setting.bin",
+  "records": [
+    {
+      "about": "name and value",
+      "offset": 0,
+      "record_size": 29,
+      "set": {
+        "oid": 800700001,
+        "update_stamp": 800800001,
+        "name": "name#1",
+        "value": "value#1"
+      },
+      "read": {
+        "oid": 800700001,
+        "update_stamp": 800800001,
+        "name": "name#1",
+        "value": "value#1"
+      }
+    },
+    {
+      "about": "name without value",
+      "offset": 33,
+      "record_size": 22,
+      "set": {
+        "oid": 800700002,
+        "update_stamp": 800800002,
+        "name": "name#2",
+        "value": null
+      },
+      "read": {
+        "oid": 800700002,
+        "update_stamp": 800800002,
+        "name": "name#2",
+        "value": null
+      }
+    },
+    {
+      "about": "value without name",
+      "offset": 59,
+      "record_size": 23,
+      "set": {
+        "oid": 800700003,
+        "update_stamp": 800800003,
+        "name": null,
+        "value": "value#3"
+      },
+      "read": {
+        "oid": 800700003,
+        "update_stamp": 800800003,
+        "name": null,
+        "value": "value#3"
+      }
+    },
+    {
+      "about": "both empty",
+      "offset": 86,
+      "record_size": 16,
+      "set": {
+        "oid": 800700004,
+        "update_stamp": 800800004,
+        "name": "",
+        "value": ""
+      },
+      "read": {
+        "oid": 800700004,
+        "update_stamp": 800800004,
+        "name": null,
+        "value": null
+      }
+    },
+    {
+      "about": "value with several lines",
+      "offset": 106,
+      "record_size": 62,
+      "set": {
+        "oid": 800700005,
+        "update_stamp": 800800005,
+        "name": "name#5",
+        "value": "line one\nline two\u000d\nline three\n\nline five"
+      },
+      "read": {
+        "oid": 800700005,
+        "update_stamp": 800800005,
+        "name": "name#5",
+        "value": "line one\nline two\u000d\nline three\n\nline five"
+      }
+    },
+    {
+      "about": "non-ASCII text",
+      "offset": 172,
+      "record_size": 51,
+      "set": {
+        "oid": 800700006,
+        "update_stamp": 800800006,
+        "name": "Schlüssel#6 €",
+        "value": "Grüße 日本 😀"
+      },
+      "read": {
+        "oid": 800700006,
+        "update_stamp": 800800006,
+        "name": "Schlüssel#6 €",
+        "value": "Grüße 日本 😀"
+      }
+    },
+    {
+      "about": "a value of 70000 bytes",
+      "offset": 227,
+      "record_size": 70026,
+      "set": {
+        "oid": 800700007,
+        "update_stamp": 800800007,
+        "name": "name#7",
+        "value": {"repeat": "abcdefghij", "times": 7000}
+      },
+      "read": {
+        "oid": 800700007,
+        "update_stamp": 800800007,
+        "name": "name#7",
+        "value": {"repeat": "abcdefghij", "times": 7000}
+      }
+    },
+    {
+      "about": "a value that is a single blank",
+      "offset": 70257,
+      "record_size": 23,
+      "set": {
+        "oid": 800700008,
+        "update_stamp": 800800008,
+        "name": "name#8",
+        "value": " "
+      },
+      "read": {
+        "oid": 800700008,
+        "update_stamp": 800800008,
+        "name": "name#8",
+        "value": " "
+      }
+    },
+    {
+      "about": "a retention period in its text form",
+      "offset": 70284,
+      "record_size": 38,
+      "set": {
+        "oid": 800700009,
+        "update_stamp": 800800009,
+        "name": "Outbox_StoragePeriod",
+        "value": "M6"
+      },
+      "read": {
+        "oid": 800700009,
+        "update_stamp": 800800009,
+        "name": "Outbox_StoragePeriod",
+        "value": "M6"
+      }
+    },
+    {
+      "about": "a repeated name",
+      "offset": 70326,
+      "record_size": 30,
+      "set": {
+        "oid": 800700010,
+        "update_stamp": 800800010,
+        "name": "name#1",
+        "value": "value#10"
+      },
+      "read": {
+        "oid": 800700010,
+        "update_stamp": 800800010,
+        "name": "name#1",
+        "value": "value#10"
+      }
+    },
+    {
+      "about": "a record with every field zero or null",
+      "offset": 70360,
+      "record_size": 16,
+      "set": {
+        "oid": 0,
+        "update_stamp": 0,
+        "name": null,
+        "value": null
+      },
+      "read": {
+        "oid": 0,
+        "update_stamp": 0,
+        "name": null,
+        "value": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-portfolio-list 1  "b4 0.1.0" 
+.SH NAME
+b4\-portfolio\-list \- List securities positions
+.SH SYNOPSIS
+\fBb4 portfolio list\fR [\fB\-\-account\fR] [\fB\-\-db\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-no\-header\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] 
+.SH DESCRIPTION
+List securities positions
+.PP
+List the positions of the securities accounts, ordered by account and name: account, ISIN, name, quantity, the latest price with its currency and day, the purchase price with its currency and day, and the state.
+.PP
+Only what the vault stores is shown. b4 computes no market value and no gain: a price can be quoted per unit or in percent of a face amount and in another currency than the account\*(Aqs, and the vault does not hold what it takes to turn that into an amount. `b4 sql` on the tables portfolio_items and stock_prices is the place for such sums.
+.PP
+With \-\-output json, jsonl or csv every position has these fields, named as in `b4 schema portfolio_items`: account_id, id, account_name, isin, name, quantity, quantity_type, quantity_currency, price_type, current_price, current_price_currency, current_price_date, purchase_price, purchase_price_currency, purchase_price_date, state, deleted. Quantities and prices are exact there; the table shows the quantity with as many decimals as the listed positions need.
+.SH OPTIONS
+.TP
+\fB\-\-account\fR \fI<ACCOUNT>\fR
+Only positions of this account
+
+ACCOUNT is tried in this order: the numeric id from `b4 accounts list`; the IBAN (blanks and case do not matter); the account number; a part of the account name (case does not matter) that only one account has, where a complete name wins over a part. If several accounts match, the command fails and lists them with their ids.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 portfolio list
+    List the positions of all securities accounts.
+b4 portfolio list \-\-account depot \-\-output json
+    The positions of one account, as JSON.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1),
+\fBb4\-portfolio\fR(1)
+.SH VERSION
+v0.1.0

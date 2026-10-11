@@ -1,0 +1,77 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-accounts-show 1  "b4 0.1.0" 
+.SH NAME
+b4\-accounts\-show \- Show everything about one account
+.SH SYNOPSIS
+\fBb4 accounts show\fR [\fB\-\-db\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-no\-header\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] <\fIACCOUNT\fR> 
+.SH DESCRIPTION
+Show everything about one account
+.PP
+Show one account: every stored field (`b4 schema accounts` describes them), then the number of its bookings and how many of them are pending, the dates of the first and the last booking, and the sums of its credits and debits with the net amount.
+.PP
+The counts and sums take every booking once (a split booking or a collective booking counts as its parts) and include pending bookings. They are the numbers of `b4 bookings summary \-\-by account`.
+.PP
+Table output leaves out fields without a value; json, jsonl and csv have every field. An account that is hidden in Banking4 can be shown too.
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.TP
+<\fIACCOUNT\fR>
+The account: id, IBAN, account number or part of the name
+
+ACCOUNT is tried in this order: the numeric id from `b4 accounts list`; the IBAN (blanks and case do not matter); the account number; a part of the account name (case does not matter) that only one account has, where a complete name wins over a part. If several accounts match, the command fails and lists them with their ids.
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 accounts show giro
+    Show the one account whose name contains "giro".
+b4 accounts show \(aqDE31 9999 0001 1000 4711 00\(aq
+    Show the account with this IBAN.
+b4 accounts show 757073100 \-\-output json
+    Show the account with this id as a JSON object.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1),
+\fBb4\-accounts\fR(1)
+.SH VERSION
+v0.1.0

@@ -1,0 +1,859 @@
+{
+  "about": "Synthetic records for the wire format in docs/format/02-records-wire-format.md, produced with Banking4. Do not edit.",
+  "notation": {
+    "framing": "bare: the file is one record body (a chunk sequence) without a size prefix. collection: the file is a sequence of size-prefixed records as in a collection file.",
+    "ops": "The primitives of one record in wire order. write is the value that was written, read is the expected value of reading the same bytes, end is the cursor after that read, counted from the start of the record body. next_chunk closes the chunk and starts another.",
+    "u16": "write is the 32-bit value the 16 stored bits were taken from.",
+    "decimal": "text is the value with its scale; negative, magnitude and scale are the exact parts.",
+    "string": "A JSON string, null, or {repeat, times, suffix} for long values. Characters outside ASCII are escaped; an unpaired surrogate appears as a lone \\uD800..\\uDFFF escape.",
+    "blob": "Hex, null, or {pattern: index_mod_251, length} for long values (byte i is i mod 251).",
+    "date_raw": "{year, month, day} as stored, or null for the null date.",
+    "timestamp": "date_clamped, date_strict and ticks: {ticks, iso, marked_as} or null for the zero timestamp. marked_as is the UTC/local marker of the in-memory value, which is not stored.",
+    "hex": "The bytes of the file; null for files above 2048 bytes, which are identified by size and sha256 only."
+  },
+  "samples": [
+    {
+      "name": "empty_record",
+      "about": "a record with no fields",
+      "file": "empty_record.bin",
+      "framing": "bare",
+      "size": 4,
+      "sha256": "fb5e512425fc9449316ec95969ebe71e2d576dbab833d61e2a5b9330fd70ee02",
+      "hex": "04000000",
+      "records": [
+        {"ops": []}
+      ]
+    },
+    {
+      "name": "u8",
+      "about": "u8 edge values",
+      "file": "u8.bin",
+      "framing": "bare",
+      "size": 10,
+      "sha256": "3c2b44bb07d7df049a3f885097c68d6054c01e6cc806255cb6542f9c6c623c3a",
+      "hex": "0a00000000017f80abff",
+      "records": [
+        {"ops": [
+          {"op": "u8", "write": 0, "read": 0, "end": 5},
+          {"op": "u8", "write": 1, "read": 1, "end": 6},
+          {"op": "u8", "write": 127, "read": 127, "end": 7},
+          {"op": "u8", "write": 128, "read": 128, "end": 8},
+          {"op": "u8", "write": 171, "read": 171, "end": 9},
+          {"op": "u8", "write": 255, "read": 255, "end": 10}
+        ]}
+      ]
+    },
+    {
+      "name": "bool",
+      "about": "both bool values",
+      "file": "bool.bin",
+      "framing": "bare",
+      "size": 6,
+      "sha256": "3aeceb51d9f0dd659915396f75c5c34505c87ea20bc4c134af1c054a14f67270",
+      "hex": "060000000001",
+      "records": [
+        {"ops": [
+          {"op": "bool", "write": false, "read": false, "end": 5},
+          {"op": "bool", "write": true, "read": true, "end": 6}
+        ]}
+      ]
+    },
+    {
+      "name": "tristate",
+      "about": "the three tristate values",
+      "file": "tristate.bin",
+      "framing": "bare",
+      "size": 7,
+      "sha256": "df5323d96fbb1f22148b6484186438042d29f7317e3ffbaa98c749a1eb2985a0",
+      "hex": "07000000020100",
+      "records": [
+        {"ops": [
+          {"op": "tristate", "write": null, "read": null, "end": 5},
+          {"op": "tristate", "write": true, "read": true, "end": 6},
+          {"op": "tristate", "write": false, "read": false, "end": 7}
+        ]}
+      ]
+    },
+    {
+      "name": "u16",
+      "about": "u16 written from 32-bit values, in and out of range",
+      "file": "u16.bin",
+      "framing": "bare",
+      "size": 34,
+      "sha256": "355ef668d052a310fe9b2fd016793bc3efa11c47f29075727008cf505cb3096c",
+      "hex": "22000000000001003412ff7f0080fefffffffffffeff0080ff7f00007011ffff0000",
+      "records": [
+        {"ops": [
+          {"op": "u16", "write": 0, "read": 0, "end": 6},
+          {"op": "u16", "write": 1, "read": 1, "end": 8},
+          {"op": "u16", "write": 4660, "read": 4660, "end": 10},
+          {"op": "u16", "write": 32767, "read": 32767, "end": 12},
+          {"op": "u16", "write": 32768, "read": 32768, "end": 14},
+          {"op": "u16", "write": 65534, "read": 65534, "end": 16},
+          {"op": "u16", "write": 65535, "read": 65535, "end": 18},
+          {"op": "u16", "write": -1, "read": 65535, "end": 20},
+          {"op": "u16", "write": -2, "read": 65534, "end": 22},
+          {"op": "u16", "write": -32768, "read": 32768, "end": 24},
+          {"op": "u16", "write": -32769, "read": 32767, "end": 26},
+          {"op": "u16", "write": 65536, "read": 0, "end": 28},
+          {"op": "u16", "write": 70000, "read": 4464, "end": 30},
+          {"op": "u16", "write": 2147483647, "read": 65535, "end": 32},
+          {"op": "u16", "write": -2147483648, "read": 0, "end": 34}
+        ]}
+      ]
+    },
+    {
+      "name": "i32",
+      "about": "i32 edge values",
+      "file": "i32.bin",
+      "framing": "bare",
+      "size": 32,
+      "sha256": "c4c3853440528006076f504d0808eb620598a0465358677050ee02929132b784",
+      "hex": "200000000000000001000000fffffffffeffffff78563412ffffff7f00000080",
+      "records": [
+        {"ops": [
+          {"op": "i32", "write": 0, "read": 0, "end": 8},
+          {"op": "i32", "write": 1, "read": 1, "end": 12},
+          {"op": "i32", "write": -1, "read": -1, "end": 16},
+          {"op": "i32", "write": -2, "read": -2, "end": 20},
+          {"op": "i32", "write": 305419896, "read": 305419896, "end": 24},
+          {"op": "i32", "write": 2147483647, "read": 2147483647, "end": 28},
+          {"op": "i32", "write": -2147483648, "read": -2147483648, "end": 32}
+        ]}
+      ]
+    },
+    {
+      "name": "i64",
+      "about": "i64 edge values",
+      "file": "i64.bin",
+      "framing": "bare",
+      "size": 52,
+      "sha256": "402191f9911f1cba1a6239655c05177097c7a872c63603b066719e6050e47b1c",
+      "hex": "3400000000000000000000000100000000000000ffffffffffffffff0807060504030201ffffffffffffff7f0000000000000080",
+      "records": [
+        {"ops": [
+          {"op": "i64", "write": 0, "read": 0, "end": 12},
+          {"op": "i64", "write": 1, "read": 1, "end": 20},
+          {"op": "i64", "write": -1, "read": -1, "end": 28},
+          {"op": "i64", "write": 72623859790382856, "read": 72623859790382856, "end": 36},
+          {"op": "i64", "write": 9223372036854775807, "read": 9223372036854775807, "end": 44},
+          {"op": "i64", "write": -9223372036854775808, "read": -9223372036854775808, "end": 52}
+        ]}
+      ]
+    },
+    {
+      "name": "decimal_basic",
+      "about": "everyday amounts; 1.10 and 1.1 differ on the wire",
+      "file": "decimal_basic.bin",
+      "framing": "bare",
+      "size": 148,
+      "sha256": "da166a48a38e2bf58ccfa44c8b4df61004d3022b208a3c7b581114504f03e3e8",
+      "hex": "94000000000000000000000000000000000000000100000000000000000000000000000001000000000000000000000000000080d2040000000000000000000000000200050000000000000000000000000002806e0000000000000000000000000002000b00000000000000000000000000010040420f000000000000000000000000007f969800000000000000000000000280",
+      "records": [
+        {"ops": [
+          {"op": "decimal", "write": {"text":"0","negative":false,"magnitude":"0","scale":0}, "read": {"text":"0","negative":false,"magnitude":"0","scale":0}, "end": 20},
+          {"op": "decimal", "write": {"text":"1","negative":false,"magnitude":"1","scale":0}, "read": {"text":"1","negative":false,"magnitude":"1","scale":0}, "end": 36},
+          {"op": "decimal", "write": {"text":"-1","negative":true,"magnitude":"1","scale":0}, "read": {"text":"-1","negative":true,"magnitude":"1","scale":0}, "end": 52},
+          {"op": "decimal", "write": {"text":"12.34","negative":false,"magnitude":"1234","scale":2}, "read": {"text":"12.34","negative":false,"magnitude":"1234","scale":2}, "end": 68},
+          {"op": "decimal", "write": {"text":"-0.05","negative":true,"magnitude":"5","scale":2}, "read": {"text":"-0.05","negative":true,"magnitude":"5","scale":2}, "end": 84},
+          {"op": "decimal", "write": {"text":"1.10","negative":false,"magnitude":"110","scale":2}, "read": {"text":"1.10","negative":false,"magnitude":"110","scale":2}, "end": 100},
+          {"op": "decimal", "write": {"text":"1.1","negative":false,"magnitude":"11","scale":1}, "read": {"text":"1.1","negative":false,"magnitude":"11","scale":1}, "end": 116},
+          {"op": "decimal", "write": {"text":"1000000","negative":false,"magnitude":"1000000","scale":0}, "read": {"text":"1000000","negative":false,"magnitude":"1000000","scale":0}, "end": 132},
+          {"op": "decimal", "write": {"text":"-99999.99","negative":true,"magnitude":"9999999","scale":2}, "read": {"text":"-99999.99","negative":true,"magnitude":"9999999","scale":2}, "end": 148}
+        ]}
+      ]
+    },
+    {
+      "name": "decimal_scales",
+      "about": "the digits 123456789 with 0 to 8 decimal places, positive and negative",
+      "file": "decimal_scales.bin",
+      "framing": "bare",
+      "size": 292,
+      "sha256": "a65213a19a84af886fcd9af642e133694a7caf1bf94e095896060eae65af29df",
+      "hex": "2401000015cd5b0700000000000000000000000015cd5b0700000000000000000000008015cd5b0700000000000000000000010015cd5b0700000000000000000000018015cd5b0700000000000000000000020015cd5b0700000000000000000000028015cd5b0700000000000000000000030015cd5b0700000000000000000000038015cd5b0700000000000000000000040015cd5b0700000000000000000000048015cd5b0700000000000000000000050015cd5b0700000000000000000000058015cd5b0700000000000000000000060015cd5b0700000000000000000000068015cd5b0700000000000000000000070015cd5b0700000000000000000000078015cd5b0700000000000000000000080015cd5b07000000000000000000000880",
+      "records": [
+        {"ops": [
+          {"op": "decimal", "write": {"text":"123456789","negative":false,"magnitude":"123456789","scale":0}, "read": {"text":"123456789","negative":false,"magnitude":"123456789","scale":0}, "end": 20},
+          {"op": "decimal", "write": {"text":"-123456789","negative":true,"magnitude":"123456789","scale":0}, "read": {"text":"-123456789","negative":true,"magnitude":"123456789","scale":0}, "end": 36},
+          {"op": "decimal", "write": {"text":"12345678.9","negative":false,"magnitude":"123456789","scale":1}, "read": {"text":"12345678.9","negative":false,"magnitude":"123456789","scale":1}, "end": 52},
+          {"op": "decimal", "write": {"text":"-12345678.9","negative":true,"magnitude":"123456789","scale":1}, "read": {"text":"-12345678.9","negative":true,"magnitude":"123456789","scale":1}, "end": 68},
+          {"op": "decimal", "write": {"text":"1234567.89","negative":false,"magnitude":"123456789","scale":2}, "read": {"text":"1234567.89","negative":false,"magnitude":"123456789","scale":2}, "end": 84},
+          {"op": "decimal", "write": {"text":"-1234567.89","negative":true,"magnitude":"123456789","scale":2}, "read": {"text":"-1234567.89","negative":true,"magnitude":"123456789","scale":2}, "end": 100},
+          {"op": "decimal", "write": {"text":"123456.789","negative":false,"magnitude":"123456789","scale":3}, "read": {"text":"123456.789","negative":false,"magnitude":"123456789","scale":3}, "end": 116},
+          {"op": "decimal", "write": {"text":"-123456.789","negative":true,"magnitude":"123456789","scale":3}, "read": {"text":"-123456.789","negative":true,"magnitude":"123456789","scale":3}, "end": 132},
+          {"op": "decimal", "write": {"text":"12345.6789","negative":false,"magnitude":"123456789","scale":4}, "read": {"text":"12345.6789","negative":false,"magnitude":"123456789","scale":4}, "end": 148},
+          {"op": "decimal", "write": {"text":"-12345.6789","negative":true,"magnitude":"123456789","scale":4}, "read": {"text":"-12345.6789","negative":true,"magnitude":"123456789","scale":4}, "end": 164},
+          {"op": "decimal", "write": {"text":"1234.56789","negative":false,"magnitude":"123456789","scale":5}, "read": {"text":"1234.56789","negative":false,"magnitude":"123456789","scale":5}, "end": 180},
+          {"op": "decimal", "write": {"text":"-1234.56789","negative":true,"magnitude":"123456789","scale":5}, "read": {"text":"-1234.56789","negative":true,"magnitude":"123456789","scale":5}, "end": 196},
+          {"op": "decimal", "write": {"text":"123.456789","negative":false,"magnitude":"123456789","scale":6}, "read": {"text":"123.456789","negative":false,"magnitude":"123456789","scale":6}, "end": 212},
+          {"op": "decimal", "write": {"text":"-123.456789","negative":true,"magnitude":"123456789","scale":6}, "read": {"text":"-123.456789","negative":true,"magnitude":"123456789","scale":6}, "end": 228},
+          {"op": "decimal", "write": {"text":"12.3456789","negative":false,"magnitude":"123456789","scale":7}, "read": {"text":"12.3456789","negative":false,"magnitude":"123456789","scale":7}, "end": 244},
+          {"op": "decimal", "write": {"text":"-12.3456789","negative":true,"magnitude":"123456789","scale":7}, "read": {"text":"-12.3456789","negative":true,"magnitude":"123456789","scale":7}, "end": 260},
+          {"op": "decimal", "write": {"text":"1.23456789","negative":false,"magnitude":"123456789","scale":8}, "read": {"text":"1.23456789","negative":false,"magnitude":"123456789","scale":8}, "end": 276},
+          {"op": "decimal", "write": {"text":"-1.23456789","negative":true,"magnitude":"123456789","scale":8}, "read": {"text":"-1.23456789","negative":true,"magnitude":"123456789","scale":8}, "end": 292}
+        ]}
+      ]
+    },
+    {
+      "name": "decimal_zero",
+      "about": "zero with a scale and with a sign",
+      "file": "decimal_zero.bin",
+      "framing": "bare",
+      "size": 84,
+      "sha256": "607f08313b3862d57c02b0acddb4f8298e879abe2e3eb87ef9190f791d0887ff",
+      "hex": "540000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000800000000000000000000000000000028000000000000000000000000000001c00",
+      "records": [
+        {"ops": [
+          {"op": "decimal", "write": {"text":"0","negative":false,"magnitude":"0","scale":0}, "read": {"text":"0","negative":false,"magnitude":"0","scale":0}, "end": 20},
+          {"op": "decimal", "write": {"text":"0.00","negative":false,"magnitude":"0","scale":2}, "read": {"text":"0.00","negative":false,"magnitude":"0","scale":2}, "end": 36},
+          {"op": "decimal", "write": {"text":"0","negative":true,"magnitude":"0","scale":0}, "read": {"text":"0","negative":true,"magnitude":"0","scale":0}, "end": 52},
+          {"op": "decimal", "write": {"text":"0.00","negative":true,"magnitude":"0","scale":2}, "read": {"text":"0.00","negative":true,"magnitude":"0","scale":2}, "end": 68},
+          {"op": "decimal", "write": {"text":"0.0000000000000000000000000000","negative":false,"magnitude":"0","scale":28}, "read": {"text":"0.0000000000000000000000000000","negative":false,"magnitude":"0","scale":28}, "end": 84}
+        ]}
+      ]
+    },
+    {
+      "name": "decimal_large",
+      "about": "values using the upper words and the largest scale",
+      "file": "decimal_large.bin",
+      "framing": "bare",
+      "size": 164,
+      "sha256": "ba56aac9fd2a9718fd01abea46db03f013bc9cfb0502f9c97b6f2d0baeaf2ee6",
+      "hex": "a4000000ffffffffffffffffffffffff00000000ffffffffffffffffffffffff000000800000000001000000000000000000000000000000000000000100000000000000ffffffffffffffffffffffff00001c0001000000000000000000000000001c0001000000000000000000000000001c804ef338be917a796deb35fd0300000400ffffffffffffffffffffffff0000068000000080000000800000008000000000",
+      "records": [
+        {"ops": [
+          {"op": "decimal", "write": {"text":"79228162514264337593543950335","negative":false,"magnitude":"79228162514264337593543950335","scale":0}, "read": {"text":"79228162514264337593543950335","negative":false,"magnitude":"79228162514264337593543950335","scale":0}, "end": 20},
+          {"op": "decimal", "write": {"text":"-79228162514264337593543950335","negative":true,"magnitude":"79228162514264337593543950335","scale":0}, "read": {"text":"-79228162514264337593543950335","negative":true,"magnitude":"79228162514264337593543950335","scale":0}, "end": 36},
+          {"op": "decimal", "write": {"text":"4294967296","negative":false,"magnitude":"4294967296","scale":0}, "read": {"text":"4294967296","negative":false,"magnitude":"4294967296","scale":0}, "end": 52},
+          {"op": "decimal", "write": {"text":"18446744073709551616","negative":false,"magnitude":"18446744073709551616","scale":0}, "read": {"text":"18446744073709551616","negative":false,"magnitude":"18446744073709551616","scale":0}, "end": 68},
+          {"op": "decimal", "write": {"text":"7.9228162514264337593543950335","negative":false,"magnitude":"79228162514264337593543950335","scale":28}, "read": {"text":"7.9228162514264337593543950335","negative":false,"magnitude":"79228162514264337593543950335","scale":28}, "end": 84},
+          {"op": "decimal", "write": {"text":"0.0000000000000000000000000001","negative":false,"magnitude":"1","scale":28}, "read": {"text":"0.0000000000000000000000000001","negative":false,"magnitude":"1","scale":28}, "end": 100},
+          {"op": "decimal", "write": {"text":"-0.0000000000000000000000000001","negative":true,"magnitude":"1","scale":28}, "read": {"text":"-0.0000000000000000000000000001","negative":true,"magnitude":"1","scale":28}, "end": 116},
+          {"op": "decimal", "write": {"text":"123456789012345678901234.5678","negative":false,"magnitude":"1234567890123456789012345678","scale":4}, "read": {"text":"123456789012345678901234.5678","negative":false,"magnitude":"1234567890123456789012345678","scale":4}, "end": 132},
+          {"op": "decimal", "write": {"text":"-79228162514264337593543.950335","negative":true,"magnitude":"79228162514264337593543950335","scale":6}, "read": {"text":"-79228162514264337593543.950335","negative":true,"magnitude":"79228162514264337593543950335","scale":6}, "end": 148},
+          {"op": "decimal", "write": {"text":"39614081266355540835774234624","negative":false,"magnitude":"39614081266355540835774234624","scale":0}, "read": {"text":"39614081266355540835774234624","negative":false,"magnitude":"39614081266355540835774234624","scale":0}, "end": 164}
+        ]}
+      ]
+    },
+    {
+      "name": "string_null_empty",
+      "about": "null and empty are written alike",
+      "file": "string_null_empty.bin",
+      "framing": "bare",
+      "size": 9,
+      "sha256": "4c521d96106e2add7493df34b8ea207c0d103761c5f33201bd1e006da02ff610",
+      "hex": "09000000000000005a",
+      "records": [
+        {"ops": [
+          {"op": "string", "write": null, "read": null, "end": 6},
+          {"op": "string", "write": "", "read": null, "end": 8},
+          {"op": "u8", "write": 90, "read": 90, "end": 9}
+        ]}
+      ]
+    },
+    {
+      "name": "string_ascii",
+      "about": "plain ASCII strings",
+      "file": "string_ascii.bin",
+      "framing": "bare",
+      "size": 46,
+      "sha256": "013bee2fae52eceb79cef024f95a088531908d0346af2076eb2d0f2e44c68f04",
+      "hex": "2e0000000100610c0048656c6c6f2c20576f726c640a00202070616464656420200a00303132333435363738395a",
+      "records": [
+        {"ops": [
+          {"op": "string", "write": "a", "read": "a", "end": 7},
+          {"op": "string", "write": "Hello, World", "read": "Hello, World", "end": 21},
+          {"op": "string", "write": "  padded  ", "read": "  padded  ", "end": 33},
+          {"op": "string", "write": "0123456789", "read": "0123456789", "end": 45},
+          {"op": "u8", "write": 90, "read": 90, "end": 46}
+        ]}
+      ]
+    },
+    {
+      "name": "string_unicode",
+      "about": "umlauts, euro sign, non-Latin scripts, a supplementary plane character, control characters",
+      "file": "string_unicode.bin",
+      "framing": "bare",
+      "size": 139,
+      "sha256": "8ef3f5f132bb3a01ecd1a001200ab417a8a319386347f01ac1aa3bcfdb938b03",
+      "hex": "8b00000007004772c3bcc39f650e00c384c396c39cc3a4c3b6c3bcc39f0300e282ac140031303020e282ac2066c3bc72204dc3bc6c6c65720c00d09fd180d0b8d0b2d0b5d1820900e697a5e69cace8aa9e0400f09f9880030065cc810600efbbbf626f6d12006c696e65310a6c696e65320d0a6c696e65330a006e756c00696e736964650100090100205a",
+      "records": [
+        {"ops": [
+          {"op": "string", "write": "Gr\u00fc\u00dfe", "read": "Gr\u00fc\u00dfe", "end": 13},
+          {"op": "string", "write": "\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df", "read": "\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df", "end": 29},
+          {"op": "string", "write": "\u20ac", "read": "\u20ac", "end": 34},
+          {"op": "string", "write": "100 \u20ac f\u00fcr M\u00fcller", "read": "100 \u20ac f\u00fcr M\u00fcller", "end": 56},
+          {"op": "string", "write": "\u041f\u0440\u0438\u0432\u0435\u0442", "read": "\u041f\u0440\u0438\u0432\u0435\u0442", "end": 70},
+          {"op": "string", "write": "\u65e5\u672c\u8a9e", "read": "\u65e5\u672c\u8a9e", "end": 81},
+          {"op": "string", "write": "\ud83d\ude00", "read": "\ud83d\ude00", "end": 87},
+          {"op": "string", "write": "e\u0301", "read": "e\u0301", "end": 92},
+          {"op": "string", "write": "\ufeffbom", "read": "\ufeffbom", "end": 100},
+          {"op": "string", "write": "line1\u000aline2\u000d\u000aline3", "read": "line1\u000aline2\u000d\u000aline3", "end": 120},
+          {"op": "string", "write": "nul\u0000inside", "read": "nul\u0000inside", "end": 132},
+          {"op": "string", "write": "\u0009", "read": "\u0009", "end": 135},
+          {"op": "string", "write": " ", "read": " ", "end": 138},
+          {"op": "u8", "write": 90, "read": 90, "end": 139}
+        ]}
+      ]
+    },
+    {
+      "name": "string_unpaired_surrogate",
+      "about": "UTF-16 that is not valid Unicode",
+      "file": "string_unpaired_surrogate.bin",
+      "framing": "bare",
+      "size": 30,
+      "sha256": "93df2fb1cdc4148e146208325b31cbc6013a7d3ed1865ae2d141a645bc91f9bd",
+      "hex": "1e000000050061efbfbd620300efbfbd0300efbfbd0600efbfbdefbfbd5a",
+      "records": [
+        {"ops": [
+          {"op": "string", "write": "a\ud800b", "read": "a\ufffdb", "end": 11},
+          {"op": "string", "write": "\udc00", "read": "\ufffd", "end": 16},
+          {"op": "string", "write": "\ud800", "read": "\ufffd", "end": 21},
+          {"op": "string", "write": "\udc00\ud800", "read": "\ufffd\ufffd", "end": 29},
+          {"op": "u8", "write": 90, "read": 90, "end": 30}
+        ]}
+      ]
+    },
+    {
+      "name": "string_len_65534",
+      "about": "65534 ASCII bytes: the longest short form string",
+      "file": "string_len_65534.bin",
+      "framing": "bare",
+      "size": 65541,
+      "sha256": "221b9a9f01a6f40ae255658cf1e4ffd9b8c13c29e79a9d54c96b91758c254cfc",
+      "hex": null,
+      "records": [
+        {"ops": [
+          {"op": "string", "write": {"repeat":"0123456789","times":6553,"suffix":"0123"}, "read": {"repeat":"0123456789","times":6553,"suffix":"0123"}, "end": 65540},
+          {"op": "u8", "write": 90, "read": 90, "end": 65541}
+        ]}
+      ]
+    },
+    {
+      "name": "string_len_65535",
+      "about": "65535 ASCII bytes: the shortest long form string",
+      "file": "string_len_65535.bin",
+      "framing": "bare",
+      "size": 65546,
+      "sha256": "c840a96503a9f11482730af551544cf6c2d9944d02bbcf31fe24893c1423d46e",
+      "hex": null,
+      "records": [
+        {"ops": [
+          {"op": "string", "write": {"repeat":"0123456789","times":6553,"suffix":"01234"}, "read": {"repeat":"0123456789","times":6553,"suffix":"01234"}, "end": 65545},
+          {"op": "u8", "write": 90, "read": 90, "end": 65546}
+        ]}
+      ]
+    },
+    {
+      "name": "string_len_70000",
+      "about": "70000 ASCII bytes",
+      "file": "string_len_70000.bin",
+      "framing": "bare",
+      "size": 70011,
+      "sha256": "ab6aafd73cc0f537fc89b4873ea7a01d71a25aaee4d150394c05b83d35569c95",
+      "hex": null,
+      "records": [
+        {"ops": [
+          {"op": "string", "write": {"repeat":"0123456789","times":7000,"suffix":""}, "read": {"repeat":"0123456789","times":7000,"suffix":""}, "end": 70010},
+          {"op": "u8", "write": 90, "read": 90, "end": 70011}
+        ]}
+      ]
+    },
+    {
+      "name": "string_utf8_65534",
+      "about": "32767 two-byte characters, 65534 bytes",
+      "file": "string_utf8_65534.bin",
+      "framing": "bare",
+      "size": 65541,
+      "sha256": "b59e4ecde46d7c1e494d1dec10ec4044e844ae2d6521963d060870f3f362a1fb",
+      "hex": null,
+      "records": [
+        {"ops": [
+          {"op": "string", "write": {"repeat":"\u00fc","times":32767,"suffix":""}, "read": {"repeat":"\u00fc","times":32767,"suffix":""}, "end": 65540},
+          {"op": "u8", "write": 90, "read": 90, "end": 65541}
+        ]}
+      ]
+    },
+    {
+      "name": "string_utf8_65535",
+      "about": "32767 two-byte characters and one ASCII character, 65535 bytes",
+      "file": "string_utf8_65535.bin",
+      "framing": "bare",
+      "size": 65546,
+      "sha256": "06c7de950813964ce3dac7c1eb1c801baae20fbfea1c980601e3d475386b8031",
+      "hex": null,
+      "records": [
+        {"ops": [
+          {"op": "string", "write": {"repeat":"\u00fc","times":32767,"suffix":"a"}, "read": {"repeat":"\u00fc","times":32767,"suffix":"a"}, "end": 65545},
+          {"op": "u8", "write": 90, "read": 90, "end": 65546}
+        ]}
+      ]
+    },
+    {
+      "name": "string_utf8_65536",
+      "about": "65536 bytes in 21846 characters",
+      "file": "string_utf8_65536.bin",
+      "framing": "bare",
+      "size": 65547,
+      "sha256": "432647be4dd5f3a632af3d9a3b3f506469b0d37e002847369c962fced257ffc6",
+      "hex": null,
+      "records": [
+        {"ops": [
+          {"op": "string", "write": {"repeat":"\u20ac","times":21845,"suffix":"a"}, "read": {"repeat":"\u20ac","times":21845,"suffix":"a"}, "end": 65546},
+          {"op": "u8", "write": 90, "read": 90, "end": 65547}
+        ]}
+      ]
+    },
+    {
+      "name": "blob_null_empty",
+      "about": "null and empty are written alike",
+      "file": "blob_null_empty.bin",
+      "framing": "bare",
+      "size": 9,
+      "sha256": "4c521d96106e2add7493df34b8ea207c0d103761c5f33201bd1e006da02ff610",
+      "hex": "09000000000000005a",
+      "records": [
+        {"ops": [
+          {"op": "blob", "write": null, "read": null, "end": 6},
+          {"op": "blob", "write": "", "read": null, "end": 8},
+          {"op": "u8", "write": 90, "read": 90, "end": 9}
+        ]}
+      ]
+    },
+    {
+      "name": "blob_small",
+      "about": "small byte arrays",
+      "file": "blob_small.bin",
+      "framing": "bare",
+      "size": 276,
+      "sha256": "19d95d65744f3f75773004fc3d581c657c9e5d0c8aa518b7e2472ead76badada",
+      "hex": "140100000400deadbeef0100000200ffff0001000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fa00010203045a",
+      "records": [
+        {"ops": [
+          {"op": "blob", "write": "deadbeef", "read": "deadbeef", "end": 10},
+          {"op": "blob", "write": "00", "read": "00", "end": 13},
+          {"op": "blob", "write": "ffff", "read": "ffff", "end": 17},
+          {"op": "blob", "write": {"pattern":"index_mod_251","length":256}, "read": {"pattern":"index_mod_251","length":256}, "end": 275},
+          {"op": "u8", "write": 90, "read": 90, "end": 276}
+        ]}
+      ]
+    },
+    {
+      "name": "blob_len_65534",
+      "about": "the longest short form blob",
+      "file": "blob_len_65534.bin",
+      "framing": "bare",
+      "size": 65541,
+      "sha256": "a05e9d7332ef62b8dff2e51146ac98f3a1808e0b526b24ad29947eb37e368296",
+      "hex": null,
+      "records": [
+        {"ops": [
+          {"op": "blob", "write": {"pattern":"index_mod_251","length":65534}, "read": {"pattern":"index_mod_251","length":65534}, "end": 65540},
+          {"op": "u8", "write": 90, "read": 90, "end": 65541}
+        ]}
+      ]
+    },
+    {
+      "name": "blob_len_65535",
+      "about": "the shortest long form blob",
+      "file": "blob_len_65535.bin",
+      "framing": "bare",
+      "size": 65546,
+      "sha256": "40d2a612a95d6d5f55f5e47626f994c25e9897deeba1ea5cd6d9c151fb0d2a58",
+      "hex": null,
+      "records": [
+        {"ops": [
+          {"op": "blob", "write": {"pattern":"index_mod_251","length":65535}, "read": {"pattern":"index_mod_251","length":65535}, "end": 65545},
+          {"op": "u8", "write": 90, "read": 90, "end": 65546}
+        ]}
+      ]
+    },
+    {
+      "name": "blob_len_70000",
+      "about": "70000 bytes",
+      "file": "blob_len_70000.bin",
+      "framing": "bare",
+      "size": 70011,
+      "sha256": "3d6cbef2c8613137c02f3201f8d9494a65311230302c5e3c35b551084d05e043",
+      "hex": null,
+      "records": [
+        {"ops": [
+          {"op": "blob", "write": {"pattern":"index_mod_251","length":70000}, "read": {"pattern":"index_mod_251","length":70000}, "end": 70010},
+          {"op": "u8", "write": 90, "read": 90, "end": 70011}
+        ]}
+      ]
+    },
+    {
+      "name": "guid",
+      "about": "empty and non-empty GUIDs",
+      "file": "guid.bin",
+      "framing": "bare",
+      "size": 68,
+      "sha256": "16c15c0b2f0e00447789e9653de647a4fb76460740cdc4ba4a27ef4a46b8136d",
+      "hex": "440000000000000000000000000000000000000033221100554477668899aabbccddeeffffffffffffffffffffffffffffffffff0403020106050807090a0b0c0d0e0f10",
+      "records": [
+        {"ops": [
+          {"op": "guid", "write": "00000000-0000-0000-0000-000000000000", "read": "00000000-0000-0000-0000-000000000000", "end": 20},
+          {"op": "guid", "write": "00112233-4455-6677-8899-aabbccddeeff", "read": "00112233-4455-6677-8899-aabbccddeeff", "end": 36},
+          {"op": "guid", "write": "ffffffff-ffff-ffff-ffff-ffffffffffff", "read": "ffffffff-ffff-ffff-ffff-ffffffffffff", "end": 52},
+          {"op": "guid", "write": "01020304-0506-0708-090a-0b0c0d0e0f10", "read": "01020304-0506-0708-090a-0b0c0d0e0f10", "end": 68}
+        ]}
+      ]
+    },
+    {
+      "name": "code",
+      "about": "fixed width codes: exact fit, padded, null, empty, blank, over-long, non-Latin-1, zero width",
+      "file": "code.bin",
+      "framing": "bare",
+      "size": 57,
+      "sha256": "637b850dbbd4324516a797087d6be8b7c8c70df48cd1f87aa3a395e07dbdbc8b",
+      "hex": "39000000455552444500000000000000202020204120455552ac0000c4d641004209410041002061614142434445464748494a4b160041a05a",
+      "records": [
+        {"ops": [
+          {"op": "code", "width": 3, "write": "EUR", "read": "EUR", "end": 7},
+          {"op": "code", "width": 3, "write": "DE", "read": "DE", "end": 10},
+          {"op": "code", "width": 3, "write": null, "read": null, "end": 13},
+          {"op": "code", "width": 3, "write": "", "read": null, "end": 16},
+          {"op": "code", "width": 3, "write": "   ", "read": null, "end": 19},
+          {"op": "code", "width": 3, "write": " A ", "read": "A", "end": 22},
+          {"op": "code", "width": 3, "write": "EURO", "read": "EUR", "end": 25},
+          {"op": "code", "width": 3, "write": "\u20ac", "read": "\u00ac", "end": 28},
+          {"op": "code", "width": 2, "write": "\u00c4\u00d6", "read": "\u00c4\u00d6", "end": 30},
+          {"op": "code", "width": 0, "write": "x", "read": null, "end": 30},
+          {"op": "code", "width": 0, "write": null, "read": null, "end": 30},
+          {"op": "code", "width": 3, "write": "A\u0000B", "read": "A\u0000B", "end": 33},
+          {"op": "code", "width": 3, "write": "\u0009A", "read": "A", "end": 36},
+          {"op": "code", "width": 3, "write": "A\u0000 ", "read": "A\u0000", "end": 39},
+          {"op": "code", "width": 1, "write": "a", "read": "a", "end": 40},
+          {"op": "code", "width": 1, "write": "ab", "read": "a", "end": 41},
+          {"op": "code", "width": 11, "write": "ABCDEFGHIJK", "read": "ABCDEFGHIJK", "end": 52},
+          {"op": "code", "width": 2, "write": "\u0416", "read": "\u0016", "end": 54},
+          {"op": "code", "width": 2, "write": "A\u00a0", "read": "A", "end": 56},
+          {"op": "u8", "write": 90, "read": 90, "end": 57}
+        ]}
+      ]
+    },
+    {
+      "name": "date_raw",
+      "about": "unvalidated dates: null, real, end of time, partial, impossible",
+      "file": "date_raw.bin",
+      "framing": "bare",
+      "size": 56,
+      "sha256": "36e8e8c9af26bdb8ea30a66df6f40da725ddf7ae5d5a77f0eff7119058208042",
+      "hex": "3800000000000000e807021d01000101cf070c1f0f270c1fe8070000e8070500e707021fe8070d2800000007000003000f270c1eff7fffff",
+      "records": [
+        {"ops": [
+          {"op": "date_raw", "write": null, "read": null, "end": 8},
+          {"op": "date_raw", "write": {"year":2024,"month":2,"day":29}, "read": {"year":2024,"month":2,"day":29}, "end": 12},
+          {"op": "date_raw", "write": {"year":1,"month":1,"day":1}, "read": {"year":1,"month":1,"day":1}, "end": 16},
+          {"op": "date_raw", "write": {"year":1999,"month":12,"day":31}, "read": {"year":1999,"month":12,"day":31}, "end": 20},
+          {"op": "date_raw", "write": {"year":9999,"month":12,"day":31}, "read": {"year":9999,"month":12,"day":31}, "end": 24},
+          {"op": "date_raw", "write": {"year":2024,"month":0,"day":0}, "read": {"year":2024,"month":0,"day":0}, "end": 28},
+          {"op": "date_raw", "write": {"year":2024,"month":5,"day":0}, "read": {"year":2024,"month":5,"day":0}, "end": 32},
+          {"op": "date_raw", "write": {"year":2023,"month":2,"day":31}, "read": {"year":2023,"month":2,"day":31}, "end": 36},
+          {"op": "date_raw", "write": {"year":2024,"month":13,"day":40}, "read": {"year":2024,"month":13,"day":40}, "end": 40},
+          {"op": "date_raw", "write": {"year":0,"month":0,"day":7}, "read": {"year":0,"month":0,"day":7}, "end": 44},
+          {"op": "date_raw", "write": {"year":0,"month":3,"day":0}, "read": {"year":0,"month":3,"day":0}, "end": 48},
+          {"op": "date_raw", "write": {"year":9999,"month":12,"day":30}, "read": {"year":9999,"month":12,"day":30}, "end": 52},
+          {"op": "date_raw", "write": {"year":32767,"month":255,"day":255}, "read": {"year":32767,"month":255,"day":255}, "end": 56}
+        ]}
+      ]
+    },
+    {
+      "name": "date_clamped",
+      "about": "dates written from timestamps and read by the clamping reader",
+      "file": "date_clamped.bin",
+      "framing": "bare",
+      "size": 56,
+      "sha256": "a79d6ddff5bd58de019caf0defa98309c98354660062cbd3c8082b0d567e8d41",
+      "hex": "380000000000000000000000010001010100010101000102cf070c1fe807021de807021de8070c1fe807021de807021d0f270c1f0f270c1f",
+      "records": [
+        {"ops": [
+          {"op": "date_clamped", "write": null, "read": null, "end": 8},
+          {"op": "date_clamped", "write": {"ticks":0,"iso":"0001-01-01T00:00:00.0000000","marked_as":"utc"}, "read": null, "end": 12},
+          {"op": "date_clamped", "write": {"ticks":1,"iso":"0001-01-01T00:00:00.0000001","marked_as":"unspecified"}, "read": null, "end": 16},
+          {"op": "date_clamped", "write": {"ticks":432000000000,"iso":"0001-01-01T12:00:00.0000000","marked_as":"unspecified"}, "read": null, "end": 20},
+          {"op": "date_clamped", "write": {"ticks":864000000000,"iso":"0001-01-02T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":864000000000,"iso":"0001-01-02T00:00:00.0000000","marked_as":"unspecified"}, "end": 24},
+          {"op": "date_clamped", "write": {"ticks":630821952000000000,"iso":"1999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":630821952000000000,"iso":"1999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "end": 28},
+          {"op": "date_clamped", "write": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 32},
+          {"op": "date_clamped", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 36},
+          {"op": "date_clamped", "write": {"ticks":638712863990000000,"iso":"2024-12-31T23:59:59.0000000","marked_as":"unspecified"}, "read": {"ticks":638712000000000000,"iso":"2024-12-31T00:00:00.0000000","marked_as":"unspecified"}, "end": 40},
+          {"op": "date_clamped", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"utc"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 44},
+          {"op": "date_clamped", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"local"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 48},
+          {"op": "date_clamped", "write": {"ticks":3155378112000000000,"iso":"9999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":3155378112000000000,"iso":"9999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "end": 52},
+          {"op": "date_clamped", "write": {"ticks":3155378975999999999,"iso":"9999-12-31T23:59:59.9999999","marked_as":"unspecified"}, "read": {"ticks":3155378112000000000,"iso":"9999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "end": 56}
+        ]}
+      ]
+    },
+    {
+      "name": "date_strict",
+      "about": "dates written from timestamps and read by the strict reader",
+      "file": "date_strict.bin",
+      "framing": "bare",
+      "size": 56,
+      "sha256": "a79d6ddff5bd58de019caf0defa98309c98354660062cbd3c8082b0d567e8d41",
+      "hex": "380000000000000000000000010001010100010101000102cf070c1fe807021de807021de8070c1fe807021de807021d0f270c1f0f270c1f",
+      "records": [
+        {"ops": [
+          {"op": "date_strict", "write": null, "read": null, "end": 8},
+          {"op": "date_strict", "write": {"ticks":0,"iso":"0001-01-01T00:00:00.0000000","marked_as":"utc"}, "read": null, "end": 12},
+          {"op": "date_strict", "write": {"ticks":1,"iso":"0001-01-01T00:00:00.0000001","marked_as":"unspecified"}, "read": null, "end": 16},
+          {"op": "date_strict", "write": {"ticks":432000000000,"iso":"0001-01-01T12:00:00.0000000","marked_as":"unspecified"}, "read": null, "end": 20},
+          {"op": "date_strict", "write": {"ticks":864000000000,"iso":"0001-01-02T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":864000000000,"iso":"0001-01-02T00:00:00.0000000","marked_as":"unspecified"}, "end": 24},
+          {"op": "date_strict", "write": {"ticks":630821952000000000,"iso":"1999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":630821952000000000,"iso":"1999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "end": 28},
+          {"op": "date_strict", "write": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 32},
+          {"op": "date_strict", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 36},
+          {"op": "date_strict", "write": {"ticks":638712863990000000,"iso":"2024-12-31T23:59:59.0000000","marked_as":"unspecified"}, "read": {"ticks":638712000000000000,"iso":"2024-12-31T00:00:00.0000000","marked_as":"unspecified"}, "end": 40},
+          {"op": "date_strict", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"utc"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 44},
+          {"op": "date_strict", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"local"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 48},
+          {"op": "date_strict", "write": {"ticks":3155378112000000000,"iso":"9999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":3155378112000000000,"iso":"9999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "end": 52},
+          {"op": "date_strict", "write": {"ticks":3155378975999999999,"iso":"9999-12-31T23:59:59.9999999","marked_as":"unspecified"}, "read": {"ticks":3155378112000000000,"iso":"9999-12-31T00:00:00.0000000","marked_as":"unspecified"}, "end": 56}
+        ]}
+      ]
+    },
+    {
+      "name": "ticks",
+      "about": "full timestamps, including the zero value, sub-second precision and UTC/local markers",
+      "file": "ticks.bin",
+      "framing": "bare",
+      "size": 84,
+      "sha256": "97241877924f71cf6875490cdd20fcf1f9ea4b8ae6ffa17e0fda0324b300ab34",
+      "hex": "540000000000000000000000010000000000000000398eb12c39dc0800398eb12c39dc0800398eb12c39dc08870fa1b12c39dc080040e4470222c1080080b5f7f57f9f08ff3f37f47528ca2b0000000000000000",
+      "records": [
+        {"ops": [
+          {"op": "ticks", "write": null, "read": null, "end": 12},
+          {"op": "ticks", "write": {"ticks":1,"iso":"0001-01-01T00:00:00.0000001","marked_as":"unspecified"}, "read": {"ticks":1,"iso":"0001-01-01T00:00:00.0000001","marked_as":"unspecified"}, "end": 20},
+          {"op": "ticks", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "read": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "end": 28},
+          {"op": "ticks", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"utc"}, "read": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "end": 36},
+          {"op": "ticks", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"local"}, "read": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "end": 44},
+          {"op": "ticks", "write": {"ticks":638448111301234567,"iso":"2024-02-29T13:45:30.1234567","marked_as":"unspecified"}, "read": {"ticks":638448111301234567,"iso":"2024-02-29T13:45:30.1234567","marked_as":"unspecified"}, "end": 52},
+          {"op": "ticks", "write": {"ticks":630822816000000000,"iso":"2000-01-01T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":630822816000000000,"iso":"2000-01-01T00:00:00.0000000","marked_as":"unspecified"}, "end": 60},
+          {"op": "ticks", "write": {"ticks":621355968000000000,"iso":"1970-01-01T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":621355968000000000,"iso":"1970-01-01T00:00:00.0000000","marked_as":"unspecified"}, "end": 68},
+          {"op": "ticks", "write": {"ticks":3155378975999999999,"iso":"9999-12-31T23:59:59.9999999","marked_as":"unspecified"}, "read": {"ticks":3155378975999999999,"iso":"9999-12-31T23:59:59.9999999","marked_as":"unspecified"}, "end": 76},
+          {"op": "ticks", "write": {"ticks":0,"iso":"0001-01-01T00:00:00.0000000","marked_as":"utc"}, "read": null, "end": 84}
+        ]}
+      ]
+    },
+    {
+      "name": "time_hms",
+      "about": "times of day and the null time",
+      "file": "time_hms.bin",
+      "framing": "bare",
+      "size": 19,
+      "sha256": "7f038d48d76e35bf9c32cf181b096384b3269321167673feb34bf9fb2a8bde70",
+      "hex": "13000000ffffff0000000d2d1e173b3b000001",
+      "records": [
+        {"ops": [
+          {"op": "time_hms", "write": null, "read": null, "end": 7},
+          {"op": "time_hms", "write": "00:00:00", "read": "00:00:00", "end": 10},
+          {"op": "time_hms", "write": "13:45:30", "read": "13:45:30", "end": 13},
+          {"op": "time_hms", "write": "23:59:59", "read": "23:59:59", "end": 16},
+          {"op": "time_hms", "write": "00:00:01", "read": "00:00:01", "end": 19}
+        ]}
+      ]
+    },
+    {
+      "name": "chunks_two",
+      "about": "two chunks with one byte each",
+      "file": "chunks_two.bin",
+      "framing": "bare",
+      "size": 10,
+      "sha256": "afdbd583f0ce963e65b155e7d606fdb1c6c41f293a359b07cfcff81392a15902",
+      "hex": "05000080010500000002",
+      "records": [
+        {"ops": [
+          {"op": "u8", "write": 1, "read": 1, "end": 5},
+          {"op": "next_chunk", "end": 9},
+          {"op": "u8", "write": 2, "read": 2, "end": 10}
+        ]}
+      ]
+    },
+    {
+      "name": "chunks_empty",
+      "about": "three chunks without payload",
+      "file": "chunks_empty.bin",
+      "framing": "bare",
+      "size": 12,
+      "sha256": "7f913015886eaf181414fe00b41c7c64667a13e04384218c51edaef54cf5a533",
+      "hex": "040000800400008004000000",
+      "records": [
+        {"ops": [
+          {"op": "next_chunk", "end": 8},
+          {"op": "next_chunk", "end": 12}
+        ]}
+      ]
+    },
+    {
+      "name": "chunks_trailing_empty",
+      "about": "a chunk followed by an empty last chunk",
+      "file": "chunks_trailing_empty.bin",
+      "framing": "bare",
+      "size": 12,
+      "sha256": "4a3bc1e95677a23df057fc70548014bb726f2f3e5d0cb7f848b9e206dab338cf",
+      "hex": "080000800700000004000000",
+      "records": [
+        {"ops": [
+          {"op": "i32", "write": 7, "read": 7, "end": 8},
+          {"op": "next_chunk", "end": 12}
+        ]}
+      ]
+    },
+    {
+      "name": "chunks_mixed",
+      "about": "three chunks with values of different sizes",
+      "file": "chunks_mixed.bin",
+      "framing": "bare",
+      "size": 105,
+      "sha256": "86d48f42bcb4cd72f7556c9ef6d7c2849826aae418553ee7d001193a0e3f15d3",
+      "hex": "19000080fa46732dfb46732d0b006669727374206368756e6b3700008040e20100000000000000000000000280e807021d1c007a7765697465722041627363686e69747420c3a4c3b6c3bc20e282ac021900000033221100554477668899aabbccddeeff0d2d1effff",
+      "records": [
+        {"ops": [
+          {"op": "i32", "write": 762529530, "read": 762529530, "end": 8},
+          {"op": "i32", "write": 762529531, "read": 762529531, "end": 12},
+          {"op": "string", "write": "first chunk", "read": "first chunk", "end": 25},
+          {"op": "next_chunk", "end": 29},
+          {"op": "decimal", "write": {"text":"-1234.56","negative":true,"magnitude":"123456","scale":2}, "read": {"text":"-1234.56","negative":true,"magnitude":"123456","scale":2}, "end": 45},
+          {"op": "date_clamped", "write": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 49},
+          {"op": "string", "write": "zweiter Abschnitt \u00e4\u00f6\u00fc \u20ac", "read": "zweiter Abschnitt \u00e4\u00f6\u00fc \u20ac", "end": 79},
+          {"op": "tristate", "write": null, "read": null, "end": 80},
+          {"op": "next_chunk", "end": 84},
+          {"op": "guid", "write": "00112233-4455-6677-8899-aabbccddeeff", "read": "00112233-4455-6677-8899-aabbccddeeff", "end": 100},
+          {"op": "time_hms", "write": "13:45:30", "read": "13:45:30", "end": 103},
+          {"op": "u16", "write": 65535, "read": 65535, "end": 105}
+        ]}
+      ]
+    },
+    {
+      "name": "all_primitives",
+      "about": "every primitive once, in two chunks",
+      "file": "all_primitives.bin",
+      "framing": "bare",
+      "size": 101,
+      "sha256": "01bda47be987a58f04f6a4e976cda10719121b33ad8b11eaf274d5bcbde56b71",
+      "hex": "47000080ab01013412feffffff0807060504030201d204000000000000000000000000020007004772c3bcc39f654555520400deadbeef33221100554477668899aabbccddeeff1e000000e807021de807021de807021d00398eb12c39dc080d2d1e00005a",
+      "records": [
+        {"ops": [
+          {"op": "u8", "write": 171, "read": 171, "end": 5},
+          {"op": "bool", "write": true, "read": true, "end": 6},
+          {"op": "tristate", "write": true, "read": true, "end": 7},
+          {"op": "u16", "write": 4660, "read": 4660, "end": 9},
+          {"op": "i32", "write": -2, "read": -2, "end": 13},
+          {"op": "i64", "write": 72623859790382856, "read": 72623859790382856, "end": 21},
+          {"op": "decimal", "write": {"text":"12.34","negative":false,"magnitude":"1234","scale":2}, "read": {"text":"12.34","negative":false,"magnitude":"1234","scale":2}, "end": 37},
+          {"op": "string", "write": "Gr\u00fc\u00dfe", "read": "Gr\u00fc\u00dfe", "end": 46},
+          {"op": "code", "width": 3, "write": "EUR", "read": "EUR", "end": 49},
+          {"op": "blob", "write": "deadbeef", "read": "deadbeef", "end": 55},
+          {"op": "guid", "write": "00112233-4455-6677-8899-aabbccddeeff", "read": "00112233-4455-6677-8899-aabbccddeeff", "end": 71},
+          {"op": "next_chunk", "end": 75},
+          {"op": "date_raw", "write": {"year":2024,"month":2,"day":29}, "read": {"year":2024,"month":2,"day":29}, "end": 79},
+          {"op": "date_clamped", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 83},
+          {"op": "date_strict", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "read": {"ticks":638447616000000000,"iso":"2024-02-29T00:00:00.0000000","marked_as":"unspecified"}, "end": 87},
+          {"op": "ticks", "write": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "read": {"ticks":638448111300000000,"iso":"2024-02-29T13:45:30.0000000","marked_as":"unspecified"}, "end": 95},
+          {"op": "time_hms", "write": "13:45:30", "read": "13:45:30", "end": 98},
+          {"op": "string", "write": null, "read": null, "end": 100},
+          {"op": "u8", "write": 90, "read": 90, "end": 101}
+        ]}
+      ]
+    },
+    {
+      "name": "collection",
+      "about": "a collection file with five records; a sixth record was declined on writing",
+      "file": "collection.bin",
+      "framing": "collection",
+      "size": 153,
+      "sha256": "9e774ec03ae5f676a4d8b8c9658f5c92105ed1323f27b77395b036f89f423860",
+      "hex": "2b0000002b000000fa46732dfb46732d0d00426569737069656c2045696e73d20400000000000000000000000002000400000004000000460000001b000080fc46732dffffffff0d00426569737069656c205a7765692b00000005000000000000000000000000000280e807021d11007a7765697465722041627363686e6974740500000005000000100b0000000500008012060000000201",
+      "records": [
+        {"ops": [
+          {"op": "i32", "write": 762529530, "read": 762529530, "end": 8},
+          {"op": "i32", "write": 762529531, "read": 762529531, "end": 12},
+          {"op": "string", "write": "Beispiel Eins", "read": "Beispiel Eins", "end": 27},
+          {"op": "decimal", "write": {"text":"12.34","negative":false,"magnitude":"1234","scale":2}, "read": {"text":"12.34","negative":false,"magnitude":"1234","scale":2}, "end": 43}
+        ]},
+        {"ops": []},
+        {"ops": [
+          {"op": "i32", "write": 762529532, "read": 762529532, "end": 8},
+          {"op": "i32", "write": -1, "read": -1, "end": 12},
+          {"op": "string", "write": "Beispiel Zwei", "read": "Beispiel Zwei", "end": 27},
+          {"op": "next_chunk", "end": 31},
+          {"op": "decimal", "write": {"text":"-0.05","negative":true,"magnitude":"5","scale":2}, "read": {"text":"-0.05","negative":true,"magnitude":"5","scale":2}, "end": 47},
+          {"op": "date_raw", "write": {"year":2024,"month":2,"day":29}, "read": {"year":2024,"month":2,"day":29}, "end": 51},
+          {"op": "string", "write": "zweiter Abschnitt", "read": "zweiter Abschnitt", "end": 70}
+        ]},
+        {"declined": true, "ops": []},
+        {"ops": [
+          {"op": "u8", "write": 16, "read": 16, "end": 5}
+        ]},
+        {"ops": [
+          {"op": "u8", "write": 18, "read": 18, "end": 5},
+          {"op": "next_chunk", "end": 9},
+          {"op": "u8", "write": 2, "read": 2, "end": 10},
+          {"op": "u8", "write": 1, "read": 1, "end": 11}
+        ]}
+      ]
+    },
+    {
+      "name": "collection_empty",
+      "about": "a collection file without records",
+      "file": "collection_empty.bin",
+      "framing": "collection",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "hex": "",
+      "records": []
+    }
+  ],
+  "stamps": [
+    {"stamp": 0, "time": "2000-01-01T00:00:00.0000000Z", "ticks": 630822816000000000, "stamp_of_time": 0},
+    {"stamp": 1, "time": "2000-01-01T00:00:01.0000000Z", "ticks": 630822816010000000, "stamp_of_time": 1},
+    {"stamp": -1, "time": "1999-12-31T23:59:59.0000000Z", "ticks": 630822815990000000, "stamp_of_time": 0},
+    {"stamp": 762529530, "time": "2024-02-29T13:45:30.0000000Z", "ticks": 638448111300000000, "stamp_of_time": 762529530},
+    {"stamp": 946684800, "time": "2029-12-31T00:00:00.0000000Z", "ticks": 640289664000000000, "stamp_of_time": 946684800},
+    {"stamp": 2147483647, "time": "2068-01-19T03:14:07.0000000Z", "ticks": 652297652470000000, "stamp_of_time": 2147483647},
+    {"stamp": -2147483648, "time": "1931-12-13T20:45:52.0000000Z", "ticks": 609347979520000000, "stamp_of_time": 0},
+    {"stamp": 86400, "time": "2000-01-02T00:00:00.0000000Z", "ticks": 630823680000000000, "stamp_of_time": 86400},
+    {"stamp": -86400, "time": "1999-12-31T00:00:00.0000000Z", "ticks": 630821952000000000, "stamp_of_time": 0}
+  ],
+  "times_to_stamps": [
+    {"time": "2000-01-01T00:00:00.0000000Z", "stamp": 0, "container_stamp": 0},
+    {"time": "1999-12-31T23:59:59.9999999Z", "stamp": 0, "container_stamp": 0},
+    {"time": "1999-12-31T23:59:59.0000000Z", "stamp": 0, "container_stamp": 0},
+    {"time": "2000-01-01T00:00:00.9999999Z", "stamp": 0, "container_stamp": 0},
+    {"time": "2000-01-01T00:00:01.0000000Z", "stamp": 1, "container_stamp": 1},
+    {"time": "2000-01-01T00:00:01.9999999Z", "stamp": 1, "container_stamp": 1},
+    {"time": "2024-02-29T13:45:30.9990000Z", "stamp": 762529530, "container_stamp": 762529530},
+    {"time": "1999-01-01T00:00:00.0000000Z", "stamp": 0, "container_stamp": 0},
+    {"time": "2068-01-19T03:14:07.0000000Z", "stamp": 2147483647, "container_stamp": 2147483647}
+  ],
+  "raw_date_to_timestamp": [
+    {"year": 0, "month": 0, "day": 0, "is_null": true, "timestamp": "none"},
+    {"year": 2024, "month": 2, "day": 29, "is_null": false, "timestamp": "2024-02-29T00:00:00.0000000"},
+    {"year": 9999, "month": 12, "day": 31, "is_null": false, "timestamp": "9999-12-31T23:59:59.9999999"},
+    {"year": 9999, "month": 12, "day": 30, "is_null": false, "timestamp": "9999-12-30T00:00:00.0000000"},
+    {"year": 2024, "month": 0, "day": 0, "is_null": false, "timestamp": "2024-01-01T00:00:00.0000000"},
+    {"year": 2024, "month": 5, "day": 0, "is_null": false, "timestamp": "2024-05-01T00:00:00.0000000"},
+    {"year": 2024, "month": 0, "day": 5, "is_null": false, "timestamp": "2024-01-05T00:00:00.0000000"},
+    {"year": 2023, "month": 2, "day": 31, "is_null": false, "timestamp": "2023-02-28T00:00:00.0000000"},
+    {"year": 2024, "month": 13, "day": 40, "is_null": false, "timestamp": "2024-12-31T00:00:00.0000000"},
+    {"year": 0, "month": 3, "day": 7, "is_null": false, "timestamp": "0001-03-07T00:00:00.0000000"},
+    {"year": 10000, "month": 1, "day": 1, "is_null": false, "timestamp": "9999-01-01T00:00:00.0000000"},
+    {"year": 32767, "month": 255, "day": 255, "is_null": false, "timestamp": "9999-12-31T00:00:00.0000000"},
+    {"year": 1, "month": 1, "day": 1, "is_null": false, "timestamp": "none"},
+    {"year": 0, "month": 0, "day": 1, "is_null": false, "timestamp": "none"}
+  ],
+  "text_lines": [
+    {"lines": [], "joined": null, "record_hex": "060000000000", "string_read": null, "lines_read": []},
+    {"lines": ["eine Zeile"], "joined": "eine Zeile", "record_hex": "100000000a0065696e65205a65696c65", "string_read": "eine Zeile", "lines_read": ["eine Zeile"]},
+    {"lines": ["Zeile 1", "Zeile 2", "Zeile 3"], "joined": "Zeile 1\u000aZeile 2\u000aZeile 3", "record_hex": "1d00000017005a65696c6520310a5a65696c6520320a5a65696c652033", "string_read": "Zeile 1\u000aZeile 2\u000aZeile 3", "lines_read": ["Zeile 1", "Zeile 2", "Zeile 3"]},
+    {"lines": ["a", "", "b"], "joined": "a\u000a\u000ab", "record_hex": "0a0000000400610a0a62", "string_read": "a\u000a\u000ab", "lines_read": ["a", "b"]},
+    {"lines": ["", "a"], "joined": "\u000aa", "record_hex": "0800000002000a61", "string_read": "\u000aa", "lines_read": ["a"]},
+    {"lines": ["a", ""], "joined": "a\u000a", "record_hex": "080000000200610a", "string_read": "a\u000a", "lines_read": ["a"]},
+    {"lines": ["a", "", "", "b"], "joined": "a\u000a\u000a\u000ab", "record_hex": "0b0000000500610a0a0a62", "string_read": "a\u000a\u000a\u000ab", "lines_read": ["a", "b"]},
+    {"lines": ["  eingerueckt  ", "   "], "joined": "  eingerueckt  \u000a   ", "record_hex": "190000001300202065696e6765727565636b7420200a202020", "string_read": "  eingerueckt  \u000a   ", "lines_read": ["  eingerueckt  ", "   "]},
+    {"lines": [""], "joined": "", "record_hex": "060000000000", "string_read": null, "lines_read": []},
+    {"lines": ["", ""], "joined": "\u000a", "record_hex": "0700000001000a", "string_read": "\u000a", "lines_read": []},
+    {"lines": ["mit\u000dCR", "mit\u000d\u000aCRLF"], "joined": "mit\u000dCR\u000amit\u000d\u000aCRLF", "record_hex": "1600000010006d69740d43520a6d69740d0a43524c46", "string_read": "mit\u000dCR\u000amit\u000d\u000aCRLF", "lines_read": ["mit", "CR", "mit", "CRLF"]},
+    {"lines": ["Gr\u00fc\u00dfe", "\u20ac 12,34"], "joined": "Gr\u00fc\u00dfe\u000a\u20ac 12,34", "record_hex": "1700000011004772c3bcc39f650ae282ac2031322c3334", "string_read": "Gr\u00fc\u00dfe\u000a\u20ac 12,34", "lines_read": ["Gr\u00fc\u00dfe", "\u20ac 12,34"]},
+    {"lines": ["kein\u0085Umbruch\u2028hier\u000bund\u000cda"], "joined": "kein\u0085Umbruch\u2028hier\u000bund\u000cda", "record_hex": "210000001b006b65696ec285556d6272756368e280a8686965720b756e640c6461", "string_read": "kein\u0085Umbruch\u2028hier\u000bund\u000cda", "lines_read": ["kein\u0085Umbruch\u2028hier\u000bund\u000cda"]}
+  ]
+}

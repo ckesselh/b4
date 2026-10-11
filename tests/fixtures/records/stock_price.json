@@ -1,0 +1,183 @@
+{
+  "record": "stock_price",
+  "specification": "docs/format/05-master-data-and-portfolio.md, section 3.7",
+  "collection_file": "stock_price.bin",
+  "collection_size": 324,
+  "collection_sha256": "bea1725fcb210ee483dc700997f118e8fae66bd9ccfa76bca904ede0ebd73c74",
+  "reader_context": {"language": "de-DE", "application_default_currency": "EUR", "application_default_country": "DE"},
+  "fields": ["oid", "update_stamp", "date", "price"],
+  "fields_in_memory_only": [],
+  "records": [
+    {
+      "index": 0,
+      "about": "every field set",
+      "offset": 0,
+      "record_size": 32,
+      "record_hex": "20000000f9ee722dd95fe52de507030397750000000000000000000000000200",
+      "written": {
+        "oid": 762507001,
+        "update_stamp": 770007001,
+        "date": "2021-03-03",
+        "price": "301.03"
+      },
+      "read": {
+        "oid": 762507001,
+        "update_stamp": 770007001,
+        "date": "2021-03-03",
+        "price": "301.03"
+      }
+    },
+    {
+      "index": 1,
+      "about": "no field set",
+      "offset": 36,
+      "record_size": 32,
+      "record_hex": "20000000faee722dda5fe52d0000000000000000000000000000000000000000",
+      "written": {
+        "oid": 762507002,
+        "update_stamp": 770007002,
+        "date": null,
+        "price": "0"
+      },
+      "read": {
+        "oid": 762507002,
+        "update_stamp": 770007002,
+        "date": null,
+        "price": "0"
+      }
+    },
+    {
+      "index": 2,
+      "about": "the worked example of the specification",
+      "offset": 72,
+      "record_size": 32,
+      "record_hex": "20000000fa46732dfb46732de807021dd2040000000000000000000000000200",
+      "written": {
+        "oid": 762529530,
+        "update_stamp": 762529531,
+        "date": "2024-02-29",
+        "price": "12.34"
+      },
+      "read": {
+        "oid": 762529530,
+        "update_stamp": 762529531,
+        "date": "2024-02-29",
+        "price": "12.34"
+      }
+    },
+    {
+      "index": 3,
+      "about": "negative price",
+      "offset": 108,
+      "record_size": 32,
+      "record_hex": "20000000fcee722ddc5fe52de807030105000000000000000000000000000280",
+      "written": {
+        "oid": 762507004,
+        "update_stamp": 770007004,
+        "date": "2024-03-01",
+        "price": "-0.05"
+      },
+      "read": {
+        "oid": 762507004,
+        "update_stamp": 770007004,
+        "date": "2024-03-01",
+        "price": "-0.05"
+      }
+    },
+    {
+      "index": 4,
+      "about": "price with trailing zeros",
+      "offset": 144,
+      "record_size": 32,
+      "record_hex": "20000000fdee722ddd5fe52de807030440420f00000000000000000000000400",
+      "written": {
+        "oid": 762507005,
+        "update_stamp": 770007005,
+        "date": "2024-03-04",
+        "price": "100.0000"
+      },
+      "read": {
+        "oid": 762507005,
+        "update_stamp": 770007005,
+        "date": "2024-03-04",
+        "price": "100.0000"
+      }
+    },
+    {
+      "index": 5,
+      "about": "partial date",
+      "offset": 180,
+      "record_size": 32,
+      "record_hex": "20000000feee722dde5fe52de807000001000000000000000000000000000000",
+      "written": {
+        "oid": 762507006,
+        "update_stamp": 770007006,
+        "date": "2024-00-00",
+        "price": "1"
+      },
+      "read": {
+        "oid": 762507006,
+        "update_stamp": 770007006,
+        "date": "2024-00-00",
+        "price": "1"
+      }
+    },
+    {
+      "index": 6,
+      "about": "impossible date",
+      "offset": 216,
+      "record_size": 32,
+      "record_hex": "20000000ffee722ddf5fe52de707021f02000000000000000000000000000000",
+      "written": {
+        "oid": 762507007,
+        "update_stamp": 770007007,
+        "date": "2023-02-31",
+        "price": "2"
+      },
+      "read": {
+        "oid": 762507007,
+        "update_stamp": 770007007,
+        "date": "2023-02-31",
+        "price": "2"
+      }
+    },
+    {
+      "index": 7,
+      "about": "last representable date",
+      "offset": 252,
+      "record_size": 32,
+      "record_hex": "2000000000ef722de05fe52d0f270c1f03000000000000000000000000000000",
+      "written": {
+        "oid": 762507008,
+        "update_stamp": 770007008,
+        "date": "9999-12-31",
+        "price": "3"
+      },
+      "read": {
+        "oid": 762507008,
+        "update_stamp": 770007008,
+        "date": "9999-12-31",
+        "price": "3"
+      }
+    },
+    {
+      "index": 8,
+      "about": "price without a date",
+      "offset": 288,
+      "record_size": 32,
+      "record_hex": "2000000001ef722de15fe52d000000002d000000000000000000000000000100",
+      "written": {
+        "oid": 762507009,
+        "update_stamp": 770007009,
+        "date": null,
+        "price": "4.5"
+      },
+      "read": {
+        "oid": 762507009,
+        "update_stamp": 770007009,
+        "date": null,
+        "price": "4.5"
+      }
+    }
+  ]
+}

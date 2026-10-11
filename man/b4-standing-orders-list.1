@@ -1,0 +1,75 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH b4-standing-orders-list 1  "b4 0.1.0" 
+.SH NAME
+b4\-standing\-orders\-list \- List standing orders
+.SH SYNOPSIS
+\fBb4 standing\-orders list\fR [\fB\-\-account\fR] [\fB\-\-db\fR] [\fB\-o\fR|\fB\-\-output\fR] [\fB\-\-no\-header\fR] [\fB\-q\fR|\fB\-\-quiet\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fB\-V\fR|\fB\-\-version\fR] 
+.SH DESCRIPTION
+List standing orders
+.PP
+List the standing orders stored in the vault, ordered by account: id, account, payee, purpose, the amount with its currency (negative is money leaving the account), the interval, the day it runs on, the next execution day and the state.
+.PP
+The day is the day of the month, or of the week for a weekly order; 97 to 99 stand for days counted from the end of the month. The next execution day is known only for orders that are kept in Banking4 (state `local`). For an order held at the bank (state `at_bank`) Banking4 computes it when it shows the order, and b4 does not: the field is empty.
+.PP
+With \-\-output json, jsonl or csv every standing order has these fields, named as in `b4 schema standing_orders`: account_id, id, account_name, scheme, amount, currency, debit, payee_name, payee_iban, payee_bic, purpose, category, state, is_local, period_unit, period_length, execution_day, first_execution_date, last_execution_date, next_execution_date, stored_next_execution_date.
+.SH OPTIONS
+.TP
+\fB\-\-account\fR \fI<ACCOUNT>\fR
+Only standing orders of this account
+
+ACCOUNT is tried in this order: the numeric id from `b4 accounts list`; the IBAN (blanks and case do not matter); the account number; a part of the account name (case does not matter) that only one account has, where a complete name wins over a part. If several accounts match, the command fails and lists them with their ids.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Print version
+.SH "GLOBAL OPTIONS"
+.TP
+\fB\-\-db\fR \fI<PATH>\fR [default: ./b4.duckdb]
+Database file: written by `decrypt`, read by every other command
+.RS
+May also be specified with the \fBB4_DB\fR environment variable. 
+.RE
+.TP
+\fB\-o\fR, \fB\-\-output\fR \fI<FORMAT>\fR
+Output format [default: table]
+
+table is made for reading: line breaks, control characters and text direction overrides in the data are replaced. csv, jsonl and json are data: written to a file or a pipe they are exact, byte for byte. Only when they are written to a terminal are the characters a terminal acts on (escape sequences, text direction overrides) made harmless: csv shows U+FFFD in their place, json and jsonl write them as \\uXXXX escapes.
+
+In json and jsonl a number that a double cannot hold exactly is a string of its digits: an integer beyond 2^53, a decimal of more than 15 significant digits.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+table: Aligned text, fitted to the terminal
+.IP \(bu 2
+json: One JSON array of objects
+.IP \(bu 2
+jsonl: One JSON object per line
+.IP \(bu 2
+csv: Comma\-separated values with a header line
+.RE
+.TP
+\fB\-\-no\-header\fR
+Leave out the header line of table and csv output
+.TP
+\fB\-q\fR, \fB\-\-quiet\fR
+Do not print informational messages to stderr
+
+Silences progress and summary lines and the "no rows" note. Warnings and errors are still printed.
+.SH EXAMPLES
+.nf
+b4 standing\-orders list
+    List the standing orders of all accounts.
+b4 standing\-orders list \-\-account giro
+    Only those of one account.
+.fi
+.SH "SEE ALSO"
+\fBb4\fR(1),
+\fBb4\-standing\-orders\fR(1)
+.SH VERSION
+v0.1.0

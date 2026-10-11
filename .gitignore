@@ -1,0 +1,19 @@
+/target
+result
+result-*
+.direnv/
+.gen/
+
+# Local working material and vault data. Never committed.
+.local/
+
+# Vaults and decrypted databases.
+*.sub
+
+# The synthetic containers of the test suite are the exception. They hold
+# made-up data only.
+!tests/fixtures/container/*.sub
+!tests/fixtures/vault/*.sub
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp*
