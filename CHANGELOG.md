@@ -15,6 +15,12 @@ First release.
   `--password-stdin`, `B4_PASSWORD` or a prompt without echo; it is never a
   command-line argument and never stored. An existing database is replaced only
   after the new one is complete.
+- `b4 decrypt` can ask for the password without a terminal. Started by a
+  desktop launcher, a scheduler or an agent, it runs the program named by
+  `B4_ASKPASS`, or in a graphical session the one named by `SSH_ASKPASS`, and
+  takes the first line that program prints as the password, the way ssh and
+  git do. `--password-stdin`, `B4_PASSWORD` and the terminal prompt come
+  first.
 - `b4 info <VAULT>`: a vault's header (cipher, key-stretch rounds, id, times)
   without the password.
 - `b4 status [--check]`: what the database contains, the reader's warnings,

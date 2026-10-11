@@ -526,6 +526,8 @@ fn decrypted_demo() -> (tempfile::TempDir, std::path::PathBuf) {
         .args(["--password-stdin", "--quiet"])
         .env_remove("B4_DB")
         .env_remove("B4_PASSWORD")
+        .env_remove("B4_ASKPASS")
+        .env_remove("SSH_ASKPASS")
         .stdin(Stdio::piped())
         .stdout(Stdio::null())
         .stderr(Stdio::null())

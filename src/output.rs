@@ -1279,7 +1279,7 @@ fn terminal_text(text: &str, line_break: &str) -> String {
 /// ESC `[` does), or an override or isolate of the bidirectional algorithm
 /// (U+202A to U+202E, U+2066 to U+2069), which can make a line read
 /// differently from what it holds.
-fn acts_on_terminal(c: char) -> bool {
+pub(crate) fn acts_on_terminal(c: char) -> bool {
     c.is_control() || matches!(c, '\u{202A}'..='\u{202E}' | '\u{2066}'..='\u{2069}')
 }
 

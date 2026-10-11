@@ -17,9 +17,9 @@ use crate::{output, password, Error};
 ///
 /// The vault is opened for reading only, read once into memory and closed;
 /// nothing is ever written to it and no lock is taken. The password comes
-/// from `--password-stdin`, `B4_PASSWORD` or a prompt, is used to unlock and
-/// dropped at once. Bank access data is never read (the allow-list is in
-/// `load`).
+/// from `--password-stdin`, `B4_PASSWORD`, a prompt or, without a terminal, a
+/// program that asks for it, is used to unlock and dropped at once. Bank
+/// access data is never read (the allow-list is in `load`).
 ///
 /// The database is built beside the target and renamed into place when it
 /// is complete, so an existing database is replaced only by a whole new one
@@ -47,7 +47,7 @@ pub fn run(args: &DecryptArgs, globals: &Globals) -> Result<(), Error> {
         return Err(naming(VaultError::DeviceBound));
     }
 
-    let password = password::obtain(args.password_stdin)?;
+    let password = password::obtain(args.password_stdin, &args.vault)?;
     let unlocked = vault.unlock(password.expose());
     drop(password);
     unlocked.map_err(naming)?;

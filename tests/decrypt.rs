@@ -36,6 +36,8 @@ fn b4(args: &[&str]) -> Command {
         .args(args)
         .env_remove("B4_DB")
         .env_remove("B4_PASSWORD")
+        .env_remove("B4_ASKPASS")
+        .env_remove("SSH_ASKPASS")
         .env_remove("NO_COLOR")
         .env_remove("CLICOLOR_FORCE")
         .stdin(Stdio::null());
@@ -1846,6 +1848,146 @@ fn the_password_can_come_from_the_environment() {
         .unwrap();
     assert_eq!(exit_code(&output), 1);
     assert!(stderr(&output).contains("wrong password"));
+}
+
+/// A shell script that plays the program that asks for the password. It
+/// lives in a directory of its own and records the question it was asked next
+/// to itself.
+#[cfg(unix)]
+struct AskScript {
+    dir: TempDir,
+}
+
+#[cfg(unix)]
+impl AskScript {
+    fn new(answer: &str) -> AskScript {
+        use std::os::unix::fs::PermissionsExt;
+
+        let script = AskScript {
+            dir: tempfile::tempdir().unwrap(),
+        };
+        let body = format!("#!/bin/sh\nprintf '%s' \"$1\" > \"$0.question\"\n{answer}\n");
+        fs::write(script.path(), body).unwrap();
+        fs::set_permissions(script.path(), fs::Permissions::from_mode(0o755)).unwrap();
+        script
+    }
+
+    fn path(&self) -> PathBuf {
+        self.dir.path().join("ask")
+    }
+
+    /// The question the script was asked, or nothing if it never ran.
+    fn question(&self) -> String {
+        fs::read_to_string(self.dir.path().join("ask.question")).unwrap_or_default()
+    }
+}
+
+/// `b4 decrypt <vault> <db>` of `work` without any password source of its
+/// own, in the environment `set` on top of the one `b4` leaves.
+#[cfg(unix)]
+fn decrypt_asking(work: &Work, set: &[(&str, &Path)]) -> Output {
+    let vault = work.vault();
+    let db = work.db();
+    let mut command = b4(&["decrypt", vault.to_str().unwrap(), db.to_str().unwrap()]);
+    command.env_remove("DISPLAY").env_remove("WAYLAND_DISPLAY");
+    for (name, value) in set {
+        command.env(name, value);
+    }
+    command.output().expect("cannot run b4")
+}
+
+#[cfg(unix)]
+#[test]
+fn without_a_terminal_a_program_is_asked_for_the_password() {
+    // With a terminal b4 asks there, and this test would wait for the answer.
+    // Test runs in CI and in a build sandbox have none.
+    if fs::File::open("/dev/tty").is_ok() {
+        eprintln!("skipped: this test run has a terminal");
+        return;
+    }
+
+    // B4_ASKPASS names the program; it gets the question and prints the answer.
+    let work = Work::new();
+    let ask = AskScript::new("echo demo");
+    let output = decrypt_asking(&work, &[("B4_ASKPASS", &ask.path())]);
+    assert_eq!(exit_code(&output), 0, "{}", stderr(&output));
+    assert_eq!(work.count("select count(*) as v from bookings"), 634);
+    assert_eq!(
+        ask.question(),
+        "b4: password for the Banking4 vault \"demo.sub\": "
+    );
+
+    // A wrong answer is a wrong password, and the database stays as it was.
+    let wrong = AskScript::new("echo nope");
+    let output = decrypt_asking(&work, &[("B4_ASKPASS", &wrong.path())]);
+    assert_eq!(exit_code(&output), 1);
+    assert!(
+        stderr(&output).contains("wrong password"),
+        "{}",
+        stderr(&output)
+    );
+    assert_eq!(work.count("select count(*) as v from bookings"), 634);
+
+    // Cancelling the dialog is an error that says so.
+    let cancelled = AskScript::new("exit 1");
+    let output = decrypt_asking(&work, &[("B4_ASKPASS", &cancelled.path())]);
+    assert_eq!(exit_code(&output), 1);
+    assert!(
+        stderr(&output).contains("was cancelled or failed"),
+        "{}",
+        stderr(&output)
+    );
+    assert!(
+        stderr(&output).contains("B4_ASKPASS"),
+        "{}",
+        stderr(&output)
+    );
+
+    // The program of ssh is used in a graphical session only.
+    let other = Work::new();
+    let ssh = AskScript::new("echo demo");
+    let output = decrypt_asking(&other, &[("SSH_ASKPASS", &ssh.path())]);
+    assert_eq!(exit_code(&output), 1);
+    assert!(
+        stderr(&output).contains("no password available"),
+        "{}",
+        stderr(&output)
+    );
+    assert_eq!(ssh.question(), "");
+    let output = decrypt_asking(
+        &other,
+        &[("SSH_ASKPASS", &ssh.path()), ("DISPLAY", Path::new(":0"))],
+    );
+    assert_eq!(exit_code(&output), 0, "{}", stderr(&output));
+    assert_eq!(other.count("select count(*) as v from bookings"), 634);
+}
+
+#[cfg(unix)]
+#[test]
+fn the_other_sources_come_before_the_program_that_asks() {
+    // No terminal is involved: stdin and the environment are tried first.
+    let work = Work::new();
+    let ask = AskScript::new("echo nope");
+
+    let vault = work.vault();
+    let db = work.db();
+    let mut command = b4(&[
+        "decrypt",
+        vault.to_str().unwrap(),
+        db.to_str().unwrap(),
+        "--password-stdin",
+    ]);
+    command.env("B4_ASKPASS", ask.path());
+    let output = run_with_stdin(command, "demo\n");
+    assert_eq!(exit_code(&output), 0, "{}", stderr(&output));
+
+    let output = b4(&["decrypt", vault.to_str().unwrap(), db.to_str().unwrap()])
+        .env("B4_ASKPASS", ask.path())
+        .env("B4_PASSWORD", PASSWORD)
+        .output()
+        .unwrap();
+    assert_eq!(exit_code(&output), 0, "{}", stderr(&output));
+    assert_eq!(ask.question(), "");
 }
 
 #[test]

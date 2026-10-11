@@ -12,7 +12,13 @@ Decrypt VAULT and write its accounts, bookings, payees, categories, standing ord
 .PP
 The database is written to a temporary file next to its final place and renamed when it is complete, so a reader never sees half a database. An existing database is replaced: running decrypt again is how the database is refreshed. The file is created with mode 0600.
 .PP
-The password comes from the first of these that applies: standard input with \-\-password\-stdin, the environment variable B4_PASSWORD, a prompt without echo on the terminal. It cannot be given as an argument and is never stored.
+The password comes from the first of these that applies: standard input with \-\-password\-stdin, the environment variable B4_PASSWORD, a prompt without echo on the terminal, or, when b4 has no terminal, a program that asks for it. It cannot be given as an argument and is never stored.
+.PP
+Without a terminal, as when a desktop launcher, a scheduler or an agent starts b4, a program can ask instead, typically in a dialog: the one named by the environment variable B4_ASKPASS, or else, in a graphical session (WAYLAND_DISPLAY or DISPLAY is set), the one named by SSH_ASKPASS, unless SSH_ASKPASS_REQUIRE is `never`. The variable holds the name or path of one program, without arguments. The program gets the question as its only argument and no standard input, and prints the password as one line on standard output; a status other than 0 means that the user cancelled.
+.PP
+As long as b4 has a terminal it asks there, also when standard input is redirected, and a prompt ended with Ctrl\-D is not followed by a dialog. `setsid \-w b4 decrypt ...` starts b4 without a terminal.
+.PP
+The password goes from that program to b4 through a pipe: it does not appear in the arguments, the environment or the output of whatever started b4. This does not protect it from the one who starts b4, who can name any program in B4_ASKPASS. b4 runs that program as it is and cannot check it.
 .PP
 Prefer the prompt or \-\-password\-stdin. An environment variable can be read by every other process of the same user while b4 runs, is passed on to the programs a shell starts, and stays set in the shell that exported it. b4 removes B4_PASSWORD from its own environment as soon as it has read it, but cannot hide what it was started with.
 .PP

@@ -116,6 +116,10 @@ rm b4.duckdb
 B4_DB        The database file, as with \-\-db.
 B4_PASSWORD  The vault password for \(gab4 decrypt\(ga. Other processes of the
              same user can read it; \(gab4 decrypt \-\-help\(ga names better ways.
+B4_ASKPASS   A program that asks for the vault password when \(gab4 decrypt\(ga
+             has no terminal, as SSH_ASKPASS does for ssh.
+SSH_ASKPASS  Used in its place in a graphical session when B4_ASKPASS is
+             not set, unless SSH_ASKPASS_REQUIRE is \(ganever\(ga.
 NO_COLOR     When set, the \(gaerror:\(ga prefix is not coloured.
 .fi
 .SH "SEE ALSO"

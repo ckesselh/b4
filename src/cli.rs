@@ -76,6 +76,10 @@ Environment:
   B4_DB        The database file, as with --db.
   B4_PASSWORD  The vault password for `b4 decrypt`. Other processes of the
                same user can read it; `b4 decrypt --help` names better ways.
+  B4_ASKPASS   A program that asks for the vault password when `b4 decrypt`
+               has no terminal, as SSH_ASKPASS does for ssh.
+  SSH_ASKPASS  Used in its place in a graphical session when B4_ASKPASS is
+               not set, unless SSH_ASKPASS_REQUIRE is `never`.
   NO_COLOR     When set, the `error:` prefix is not coloured."
 )]
 pub struct Cli {
@@ -209,8 +213,28 @@ pub enum Command {
     ///
     /// The password comes from the first of these that applies: standard input
     /// with --password-stdin, the environment variable B4_PASSWORD, a prompt
-    /// without echo on the terminal. It cannot be given as an argument and is
-    /// never stored.
+    /// without echo on the terminal, or, when b4 has no terminal, a program
+    /// that asks for it. It cannot be given as an argument and is never stored.
+    ///
+    /// Without a terminal, as when a desktop launcher, a scheduler or an agent
+    /// starts b4, a program can ask instead, typically in a dialog: the one
+    /// named by the environment variable B4_ASKPASS, or else, in a graphical
+    /// session (WAYLAND_DISPLAY or DISPLAY is set), the one named by
+    /// SSH_ASKPASS, unless SSH_ASKPASS_REQUIRE is `never`. The variable holds
+    /// the name or path of one program, without arguments. The program gets
+    /// the question as its only argument and no standard input, and prints the
+    /// password as one line on standard output; a status other than 0 means
+    /// that the user cancelled.
+    ///
+    /// As long as b4 has a terminal it asks there, also when standard input is
+    /// redirected, and a prompt ended with Ctrl-D is not followed by a dialog.
+    /// `setsid -w b4 decrypt ...` starts b4 without a terminal.
+    ///
+    /// The password goes from that program to b4 through a pipe: it does not
+    /// appear in the arguments, the environment or the output of whatever
+    /// started b4. This does not protect it from the one who starts b4, who
+    /// can name any program in B4_ASKPASS. b4 runs that program as it is and
+    /// cannot check it.
     ///
     /// Prefer the prompt or --password-stdin. An environment variable can be
     /// read by every other process of the same user while b4 runs, is passed

@@ -15,7 +15,8 @@ weakens the promises below are very welcome.
 - **The vault is never modified.** It is opened read-only, read once and
   closed.
 - **The password is never stored** and never accepted as a command-line
-  argument.
+  argument. When a program asks for it on b4's behalf (`B4_ASKPASS`, or
+  `SSH_ASKPASS` in a graphical session), it reaches b4 through a pipe.
 - **`b4 sql` cannot leave the database.** Queries run read-only with DuckDB's
   file system access disabled and its configuration locked. A query can still
   use CPU and up to about 1 GiB of memory for as long as it runs; there is no
@@ -31,6 +32,12 @@ weakens the promises below are very welcome.
 What b4 does not promise:
 
 - **The database is not encrypted.** It holds your bookings in plain form.
+- **The password is not protected from whoever starts b4.** That process can
+  feed b4 the password itself, and it decides which program asks for it:
+  `B4_ASKPASS` can be set for a single command, and b4 runs the program it
+  names as it is, without checking it. Asking in a dialog keeps the password
+  out of an agent's transcript, arguments and environment. It does not stop a
+  program that runs as you from asking you for the password itself.
 - **The vault's encryption is Banking4's**: AES in ECB mode with a
   password-derived key and no integrity protection. `b4` neither weakens nor
   strengthens it.

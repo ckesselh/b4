@@ -226,6 +226,8 @@ fn b4(args: &[&str]) -> Command {
         .args(args)
         .env_remove("B4_DB")
         .env_remove("B4_PASSWORD")
+        .env_remove("B4_ASKPASS")
+        .env_remove("SSH_ASKPASS")
         .env_remove("NO_COLOR")
         .env_remove("CLICOLOR_FORCE")
         .stdin(Stdio::null());

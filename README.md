@@ -44,6 +44,9 @@ result is an ordinary DuckDB file that you can query with `b4`, with the
   22,000 bookings decrypts in well under a second.
 - **Decrypt once, query freely.** The password is needed for `b4 decrypt` only.
   Delete the database file and the data is locked away again.
+- **Asks where you are.** On a terminal `b4 decrypt` prompts without echo;
+  started without one, it asks in a dialog through an askpass program, so an
+  agent can refresh the database without the password passing through it.
 - **Exact money.** Amounts are `DECIMAL` columns, never floating point, so sums
   come out to the cent.
 - **Made for scripts and agents.** `--output table|json|jsonl|csv`, stable
@@ -150,12 +153,65 @@ clean up: `b4` keeps no configuration, no cache and no stored password.
    for example `pass show banking4 | b4 decrypt vault.sub --password-stdin`
 2. the environment variable `B4_PASSWORD`
 3. a prompt on the terminal, without echo
+4. without a terminal: a program that asks for it, usually in a dialog
 
 There is deliberately no `--password` option: command-line arguments are
 visible to every process on the machine and end up in shell history. An
 environment variable is visible to other processes of the same user, so prefer
 stdin or the prompt. The password is never stored and is wiped from memory when
 the command ends.
+
+### Asking in a dialog when there is no terminal
+
+The fourth source is for everything that starts `b4` without a terminal: a
+desktop launcher, a timer, an AI agent. `b4 decrypt` then runs a program that
+asks for the password, the way ssh and git do:
+
+- the program named by the environment variable `B4_ASKPASS`, or else
+- in a graphical session (`WAYLAND_DISPLAY` or `DISPLAY` is set), the program
+  named by `SSH_ASKPASS`, unless `SSH_ASKPASS_REQUIRE` is `never`.
+
+Many desktops set `SSH_ASKPASS` already; then there is nothing to set.
+Otherwise, or to choose another program:
+
+```console
+$ export B4_ASKPASS=ksshaskpass                        # a name on PATH or a full path
+$ setsid -w b4 decrypt ~/Banking/Haushaltsbuch.sub     # setsid starts b4 without a terminal: the dialog asks
+```
+
+Redirecting standard input is not enough to get the dialog: as long as `b4`
+has a terminal, it asks there, and a prompt that you end with Ctrl-D is not
+followed by a dialog.
+
+The variable holds the name or path of one program, without arguments. `b4`
+runs it with the question as its only argument (`b4: password for the Banking4
+vault "Haushaltsbuch.sub": `) and without standard input, and takes the first
+line it prints as the password. A status other than 0 means that the user
+cancelled, and `b4 decrypt` fails without touching the database. That is the
+convention of `ssh-askpass`, so `ksshaskpass`, `ssh-askpass`,
+`lxqt-openssh-askpass` and the like fit as they are. A program with another
+interface needs a two-line script around it:
+
+```sh
+#!/bin/sh
+exec zenity --password --title="$1"
+```
+
+This way an AI agent can refresh the database without the password passing
+through it: the agent runs `b4 decrypt`, the dialog appears on your screen,
+and what you type goes to `b4` through a pipe. It does not appear in the
+agent's transcript, in any argument or in the environment.
+
+Know the limits of that:
+
+- **It is a convenience, not a barrier.** Whoever starts `b4` chooses the
+  program, because `B4_ASKPASS` can be set for a single command. An agent that
+  wants your password can show you the same dialog and keep the answer, with
+  or without `b4`. Use it with agents you would also let run `sudo`.
+- **`b4` runs the program as it is** and cannot check it.
+- **A password dialog you did not expect is a reason to cancel.** The question
+  starts with `b4:` and names the vault file, but so can anything that
+  imitates it.
 
 ## Usage
 
@@ -349,6 +405,11 @@ $ duckdb -readonly b4.duckdb "select * from bookings_view limit 5"
 
 - Give an agent the database, not the vault. It needs no password and cannot
   reach the bank access data, because that never leaves the vault.
+- With an askpass program, an agent can run `b4 decrypt` itself when the
+  database is out of date: the password is asked for in a dialog and goes to
+  `b4` directly. This keeps the password out of the agent's transcript; it is
+  no protection against an agent that is after it
+  ([Asking in a dialog](#asking-in-a-dialog-when-there-is-no-terminal)).
 - `b4 schema -o json` describes every table and column in one call.
 - `b4 sql` opens the database read-only, with DuckDB's file system access
   switched off and its configuration locked: a query can read this database
